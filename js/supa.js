@@ -2,6 +2,8 @@ if(/\.html$/.test(location.pathname))history.replaceState(null,"",location.pathn
 // Klien Supabase bersama + utilitas UI (msg/toast/esc/friendlyErr)
 /* Simpan alamat asli sebelum klien Supabase membersihkan #hash: auth.js membacanya untuk hasil tautan konfirmasi email (sukses atau galat). */
 window.IB_ARRIVAL={hash:location.hash,search:location.search};
+/* Simpan alamat asli sebelum klien Supabase membersihkan #hash: admin-login.js membacanya untuk tautan reset password. */
+window.IB_ARRIVAL={hash:location.hash,search:location.search};
 (function(){
   var C=window.IB_CONFIG||{};
   window.sb=(window.supabase&&C.SUPABASE_URL&&C.SUPABASE_ANON_KEY)?window.supabase.createClient(C.SUPABASE_URL,C.SUPABASE_ANON_KEY):null;
