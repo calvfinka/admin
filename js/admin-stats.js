@@ -133,7 +133,7 @@ setInterval(function(){var v=$("v_stats"),a=document.activeElement;
   BLOAD=true;BREC_ERR="";
   sb.rpc("admin_browser_stats",{p_days:days}).then(function(r){if(!r.error&&r.data)BD=r.data;return loadBrowserFeed()}).then(function(){BLOAD=false;if(tab==="browser")render()},function(){BLOAD=false})},15000);
 
-function render(){var b=$("stBody");if(tab==="browser"){b.innerHTML=browserView();[].forEach.call(document.querySelectorAll("#stTabs .tab"),function(x){x.classList.toggle("on",x.dataset.t===tab)});[].forEach.call(document.querySelectorAll("#stRange .tab"),function(x){x.classList.toggle("on",+x.dataset.d===days)});if(!BD&&!BLOAD&&!BFAIL)loadBrowser();return}if(!D){b.innerHTML='<p class="meta">Memuat…</p>';return}
+function render(){var b=$("stBody");if(tab==="mod"){b.innerHTML=window.ADM_MOD?ADM_MOD.view():'<p class="meta">Modul moderasi belum dimuat.</p>';[].forEach.call(document.querySelectorAll("#stTabs .tab"),function(x){x.classList.toggle("on",x.dataset.t===tab)});[].forEach.call(document.querySelectorAll("#stRange .tab"),function(x){x.classList.toggle("on",+x.dataset.d===days)});if(window.ADM_MOD)ADM_MOD.ensure(render);return}if(tab==="browser"){b.innerHTML=browserView();[].forEach.call(document.querySelectorAll("#stTabs .tab"),function(x){x.classList.toggle("on",x.dataset.t===tab)});[].forEach.call(document.querySelectorAll("#stRange .tab"),function(x){x.classList.toggle("on",+x.dataset.d===days)});if(!BD&&!BLOAD&&!BFAIL)loadBrowser();return}if(!D){b.innerHTML='<p class="meta">Memuat…</p>';return}
   b.innerHTML=tab==="visit"?visit():tab==="users"?users():content();
   [].forEach.call(document.querySelectorAll("#stTabs .tab"),function(x){x.classList.toggle("on",x.dataset.t===tab)});
   [].forEach.call(document.querySelectorAll("#stRange .tab"),function(x){x.classList.toggle("on",+x.dataset.d===days)})}
@@ -154,8 +154,8 @@ sync();
 
 document.addEventListener("click",function(ev){var b=ev.target.closest("button");if(!b)return;
   if(b.dataset.v==="stats"&&!D&&!loading)load();
-  if(b.closest("#stRange")&&b.dataset.d){days=+b.dataset.d;D=null;BD=null;if(tab==="browser"){BFAIL=""}load()}
-  if(b.closest("#stTabs")&&b.dataset.t){tab=b.dataset.t;if(tab==="browser"){BFAIL="";return render()}if(tab==="users"&&!UROWS.length&&D)loadUsers().then(render);else render()}
+  if(b.closest("#stRange")&&b.dataset.d){days=+b.dataset.d;D=null;BD=null;if(window.ADM_MOD)ADM_MOD.reset();if(tab==="browser"){BFAIL=""}load()}
+  if(b.closest("#stTabs")&&b.dataset.t){tab=b.dataset.t;if(tab==="mod"&&window.ADM_MOD){ADM_MOD.reset();return render()}if(tab==="browser"){BFAIL="";return render()}if(tab==="users"&&!UROWS.length&&D)loadUsers().then(render);else render()}
   if(b.id==="stRetry")load();
   if(b.id==="bRetry"){BFAIL="";BD=null;render()}
   if(b.id==="bGo"){BHOST=($("bHost").value||"").trim().toLowerCase();BSRC=$("bSrc").value;loadBrowserFeed()}

@@ -29,3 +29,8 @@ Halaman **Admin & Akses** (khusus Pemilik) menambah admin baru dengan peran/izin
 Tab **Browser** di Statistik menampilkan kunjungan, situs yang dibuka, mode proxy/langsung, situs bermasalah, kinerja proxy, dan aliran peristiwa langsung (menyegar tiap 15 detik). Izin: `stats.view` (tidak ada izin baru). Hapus data lama: khusus Pemilik.
 - Jalankan `supabase/schema_browser.sql` dari repo browser (setelah `schema_rbac.sql`). Sebelum itu, tab menampilkan petunjuk pemasangan.
 - Berkas: `js/admin-stats.js` (fungsi `browserView`, `loadBrowser`), tombol tab di `index.html`.
+
+## Statistik > Moderasi (kelola daftar blokir browser)
+Tab **Moderasi** di Statistik: tambah/hapus situs di daftar blokir atau peringatan, tindak lanjuti laporan pengguna browser, dan lihat jumlah penolakan. Membaca: `stats.view`; mengubah, menutup laporan, dan menghapus: khusus Pemilik (ditegakkan di database).
+- Jalankan `supabase/schema_moderasi.sql` dari repo browser (setelah `schema_browser.sql`). Sebelum itu, tab menampilkan petunjuk pemasangan.
+- Berkas: `js/admin-moderasi.js` (dihubungkan lewat `window.ADM_MOD`), perubahan kecil di `js/admin-stats.js` (cabang `tab==="mod"`), tombol tab di `index.html`.
