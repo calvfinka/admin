@@ -1,0 +1,144 @@
+/* Panel Admin GoWithDME: lapisan tampilan (dimuat paling akhir; hanya menimpa warna, huruf, dan bentuk).
+   Arah desain: "pos komando basecamp". Sidebar hijau hutan dengan garis kontur peta jadi satu-satunya elemen yang mencolok;
+   sisanya tenang: kertas abu kehijauan, kartu datar bergaris tipis, angka besar yang mudah dibaca sekilas.
+   Tidak mengubah markup atau perilaku; hapus tautan berkas ini di index.html untuk kembali ke tampilan lama. */
+
+:root{
+  --paper:#ECF0ED;--forest:#0A3D31;--forest-2:#0F5240;--ink:#13201B;--mute:#5B6B64;--faint:#8C9A93;--line:#D8E0DB;
+  --sel:#DCEBE3;--hover:#E5ECE8;--brand:#0E5A46;--sun:#F5B416;--accent:#E4501A;--ok:#17855A;
+  --fd:"Bricolage Grotesque","Plus Jakarta Sans",system-ui,sans-serif;
+  --lift:0 1px 0 rgba(10,61,49,.04),0 8px 24px -16px rgba(10,61,49,.28)
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0E1512;--forest:#0A1F19;--forest-2:#12332A;--ink:#EAF1ED;--mute:#9DB0A7;--faint:#6F8279;--line:#25332D;
+  --sel:#173A2F;--hover:#1B2823;--brand:#4FC9A4;--bg:#151E1A;--s1:#151E1A;--s2:#1D2924;--side:#1D2924;--field:#1D2924;
+  --lift:0 1px 0 rgba(0,0,0,.2),0 8px 24px -16px rgba(0,0,0,.6)}}
+:root[data-theme="dark"]{
+  --paper:#0E1512;--forest:#0A1F19;--forest-2:#12332A;--ink:#EAF1ED;--mute:#9DB0A7;--faint:#6F8279;--line:#25332D;
+  --sel:#173A2F;--hover:#1B2823;--brand:#4FC9A4;--bg:#151E1A;--s1:#151E1A;--s2:#1D2924;--side:#1D2924;--field:#1D2924;
+  --lift:0 1px 0 rgba(0,0,0,.2),0 8px 24px -16px rgba(0,0,0,.6)}
+
+.adm-body{background:var(--paper);color:var(--ink);font-family:var(--f)}
+
+/* ---------- Huruf ---------- */
+.adm-hd h2,.card h3,.sh,.kp b,.st5 b,.adm-side .adm-slbl,.logo span:first-of-type{font-family:var(--fd)}
+.adm-hd h2{font-size:clamp(26px,5.6vw,34px);line-height:1.08;letter-spacing:-.025em;font-weight:700;color:var(--ink)}
+.adm-hd{border-bottom:0;padding-bottom:4px;margin-bottom:10px}
+.adm-hd .meta{font-size:14px;line-height:1.5;color:var(--mute)}
+.sh{font-size:17px;font-weight:650;letter-spacing:-.01em;color:var(--ink);margin:26px 0 8px}
+.card h3{font-size:17px;font-weight:650;letter-spacing:-.01em}
+
+/* ---------- Bilah atas ---------- */
+.adm-top{background:color-mix(in srgb,var(--bg) 88%,transparent);-webkit-backdrop-filter:saturate(1.4) blur(10px);backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
+.adm-top .logo span:first-of-type{font-weight:700;letter-spacing:-.02em;font-size:17px}
+.adm-top .badge.adm{background:var(--forest);color:#fff;font-weight:600;letter-spacing:.01em}
+.adm-crumb{font-family:var(--fd);font-size:14px;color:var(--ink);font-weight:600}
+.adm-top .btn.pri{background:var(--accent);box-shadow:0 6px 14px -8px var(--accent)}
+.adm-top .btn.ghost,.ico-btn{border-color:var(--line);background:transparent}
+.adm-top .btn.ghost:hover,.ico-btn:hover{background:var(--hover)}
+
+/* ---------- Sidebar (desktop) ---------- */
+@media (min-width:900px){
+  .adm-shell{padding-top:16px;gap:24px}
+  .adm-side{
+    background:linear-gradient(180deg,var(--forest) 0%,var(--forest-2) 100%);border:0;border-radius:18px;padding:16px 12px 20px;gap:18px;
+    min-height:calc(100vh - var(--bh,56px) - 48px);align-content:start;position:sticky;overflow:hidden;isolation:isolate;
+    box-shadow:0 18px 40px -24px rgba(10,61,49,.7)
+  }
+  .adm-side::after{content:"";position:absolute;z-index:-1;right:-150px;bottom:-110px;width:440px;height:380px;background:url(../assets/kontur.svg) center/contain no-repeat;opacity:.13;pointer-events:none}
+  .adm-slbl{font-size:12px;font-weight:600;text-transform:none;letter-spacing:0;color:rgba(255,255,255,.55);padding:4px 12px}
+  .adm-side button{color:rgba(255,255,255,.86);border-radius:10px;padding:9px 12px;font-weight:550;position:relative}
+  .adm-side button .i{color:rgba(255,255,255,.55)}
+  .adm-side button:hover{background:rgba(255,255,255,.08);color:#fff}
+  .adm-side button.on{background:rgba(255,255,255,.12);color:#fff;font-weight:650}
+  .adm-side button.on::before{content:"";position:absolute;left:-12px;top:9px;bottom:9px;width:4px;border-radius:0 4px 4px 0;background:var(--sun)}
+  .adm-side button.on .i{color:var(--sun)}
+  .adm-side button:focus-visible{outline:2px solid var(--sun);outline-offset:1px}
+}
+
+/* ---------- Navigasi bawah (HP) ---------- */
+.bnav{background:var(--bg);border-top:1px solid var(--line);box-shadow:0 -10px 24px -18px rgba(10,61,49,.5)}
+.bnav button{color:var(--mute);font-weight:600}
+.bnav button.on{color:var(--brand)}
+.bnav button.on::before{content:"";position:absolute;top:0;left:30%;right:30%;height:3px;border-radius:0 0 3px 3px;background:var(--sun)}
+
+/* ---------- Kartu & angka ---------- */
+.card,.kp,.st5>div,.it,.qa button{border-radius:14px;border-color:var(--line);background:var(--bg);box-shadow:none}
+.card{padding:18px}
+.kp{padding:14px 16px;gap:4px}
+.kp small{order:-1;font-size:13px;font-weight:550;color:var(--mute)}
+.kp b,.st5 b{font-size:clamp(28px,6vw,38px);font-weight:700;letter-spacing:-.03em;line-height:1.05;font-variant-numeric:tabular-nums;color:var(--ink)}
+.st5{gap:8px}
+.st5>div{padding:12px 14px;color:var(--mute);font-size:12.5px;font-weight:550}
+.st5 b{display:block;font-size:26px;margin-bottom:2px}
+.tr.up,.kp .tr.up{color:var(--ok);font-weight:650}
+.lnk{color:var(--brand);font-weight:650}
+
+/* ---------- Banner sapaan di beranda: satu-satunya blok bergambar ---------- */
+#v_dash>.adm-hd{
+  position:relative;overflow:hidden;isolation:isolate;border-radius:20px;padding:26px 24px 24px;margin-bottom:6px;
+  background:linear-gradient(135deg,var(--forest) 0%,var(--forest-2) 70%,#17694F 100%);color:#fff
+}
+#v_dash>.adm-hd::after{content:"";position:absolute;z-index:-1;right:-70px;top:-90px;width:420px;height:360px;background:url(../assets/kontur.svg) center/contain no-repeat;opacity:.2}
+#v_dash>.adm-hd h2{color:#fff;font-size:clamp(28px,6.4vw,40px)}
+#v_dash>.adm-hd .meta{color:rgba(255,255,255,.78);max-width:52ch;margin-top:8px}
+#v_dash>.adm-hd .adm-date{display:block;font-size:13px;font-weight:600;color:var(--sun);margin-bottom:8px}
+
+/* ---------- Aksi cepat ---------- */
+.qa{gap:10px}
+.qa button{display:flex;align-items:center;gap:12px;padding:14px;text-align:left;font-weight:650;font-size:14px;transition:border-color .15s,transform .15s,box-shadow .15s}
+.qa button:hover{border-color:var(--brand);box-shadow:var(--lift);transform:translateY(-1px)}
+.qa button:active{transform:none}
+.qa-ic{display:grid;place-items:center;flex:none;width:40px;height:40px;margin:0;border-radius:12px;background:var(--sel)}
+.qa-ic svg.i{width:20px;height:20px;color:var(--brand)}
+
+/* ---------- Tab, chip, segmen ---------- */
+.seg{background:var(--sel);border-radius:12px;padding:4px}
+.seg button{border-radius:9px;font-weight:600;color:var(--mute)}
+.seg button.on{background:var(--bg);color:var(--ink);box-shadow:0 1px 2px rgba(10,61,49,.18)}
+.tab{border-color:var(--line);font-weight:600}
+.tab[aria-pressed="true"],.tab.on,.tab[aria-selected="true"]{background:var(--forest);border-color:var(--forest);color:#fff}
+.chip[aria-pressed="true"],.chip.on{background:var(--forest);border-color:var(--forest);color:#fff}
+
+/* ---------- Tombol ---------- */
+.btn{font-weight:650;border-radius:10px}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.pri:hover{filter:brightness(1.06)}
+.btn.ghost{border-color:var(--line)}
+.btn:focus-visible,.seg button:focus-visible,.tab:focus-visible,.qa button:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+
+/* ---------- Daftar event ---------- */
+.it{padding:10px;transition:border-color .15s}
+.it:hover{border-color:color-mix(in srgb,var(--brand) 45%,var(--line))}
+.ib b{font-weight:650}
+.th{border-radius:10px}
+.badge{font-weight:650}
+
+/* ---------- Formulir ---------- */
+.f input,.f select,.f textarea{border-radius:11px;border:1px solid var(--line);background:var(--bg);min-height:44px;padding:10px 12px;transition:border-color .15s,box-shadow .15s}
+.f input:hover,.f select:hover,.f textarea:hover{border-color:color-mix(in srgb,var(--brand) 40%,var(--line))}
+.f input:focus,.f select:focus,.f textarea:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 20%,transparent)}
+.fs{border-radius:16px;border-color:var(--line);background:var(--bg);padding:14px 16px 6px}
+.fs legend{font:650 15px var(--fd);letter-spacing:-.01em;text-transform:none;color:var(--ink);padding:0 8px}
+.kind button{border-width:1.5px;border-radius:12px;font-weight:650}
+.kind button.on{background:var(--sel);border-color:var(--brand);color:var(--brand)}
+.kind button.on svg.i{color:var(--brand)}
+.pv.drop{border:2px dashed color-mix(in srgb,var(--brand) 55%,var(--line));border-radius:14px;background:color-mix(in srgb,var(--sel) 55%,transparent);color:var(--brand)}
+.sticky{background:color-mix(in srgb,var(--paper) 92%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:10px 0}
+
+/* ---------- Tabel ---------- */
+.tbl th{color:var(--mute);font-weight:600}
+.tbl tbody tr:hover td{background:var(--hover)}
+
+/* ---------- HP ---------- */
+@media (max-width:640px){
+  .adm-main{padding-left:14px;padding-right:14px}
+  #v_dash>.adm-hd{padding:22px 18px 20px;border-radius:18px}
+  .adm-top .btn.ghost.sm:not(.adm-quick-new){padding-left:9px;padding-right:9px}
+}
+@media (max-width:520px){
+  .adm-top-in>a.btn.ghost.sm[href*="/profil"]{display:none}
+}
+@media (prefers-reduced-motion:reduce){.qa button,.it,.f input{transition:none}.qa button:hover{transform:none}}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .adm-top .badge.adm{background:var(--forest-2);color:#CFF5E6}}
+:root[data-theme="dark"] .adm-top .badge.adm{background:var(--forest-2);color:#CFF5E6}
