@@ -8,30 +8,21 @@ var f=$("lgForm");if(!f)return;
 f.addEventListener("submit",function(e){e.preventDefault();
   if(!ready())return;var em=$("lgEmail").value.trim(),pw=$("lgPass").value;
   if(!em||!pw)return say("Isi email dan kata sandi.",true);
-  say("Memeriksa…");
+  var go=$("lgGo"),t0=go.textContent;go.disabled=true;go.textContent="Memeriksa…";say("");
+  var back=function(){go.disabled=false;go.textContent=t0};
   sb.auth.signInWithPassword({email:em,password:pw}).then(function(r){
-    if(r.error)return say("Email atau kata sandi salah.",true);
-    location.reload()
-  },function(){say("Tidak bisa terhubung. Coba lagi.",true)})});
-$("lgMagic").addEventListener("click",function(){
-  if(!ready())return;var em=$("lgEmail").value.trim();
-  if(!em)return say("Isi email dulu, lalu klik lagi.",true);
-  sb.auth.signInWithOtp({email:em,options:{emailRedirectTo:location.origin+location.pathname,shouldCreateUser:false}}).then(function(r){
-    say(r.error?"Tautan tidak bisa dikirim. Periksa email atau coba lagi nanti.":"Tautan masuk dikirim. Buka email-mu di perangkat ini.",!!r.error)
-  },function(){say("Tidak bisa terhubung. Coba lagi.",true)})});
-/* Lupa kata sandi: tautan reset kembali ke halaman ini (tanpa hash/query), lalu form "Buat kata sandi baru" tampil. */
-var cool=null;
-$("lgForgot").addEventListener("click",function(){
-  if(!ready())return;var em=$("lgEmail").value.trim(),b=this;
-  if(!em)return say("Isi email dulu, lalu klik lagi.",true);
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em))return say("Alamat email belum benar.",true);
-  b.disabled=true;say("Mengirim tautan reset…");
-  sb.auth.resetPasswordForEmail(em,{redirectTo:location.origin+location.pathname}).then(function(r){
-    if(r.error){b.disabled=false;return say("Tautan reset tidak bisa dikirim. Coba lagi nanti.",true)}
-    say("Jika email terdaftar, tautan reset sudah dikirim. Cek kotak masuk dan spam, lalu buka tautannya di perangkat ini.");
-    var n=60,t0="Lupa kata sandi?";b.textContent="Tunggu "+n+" dtk";clearInterval(cool);
-    cool=setInterval(function(){n--;if(n<=0){clearInterval(cool);b.disabled=false;b.textContent=t0}else b.textContent="Tunggu "+n+" dtk"},1000)
-  },function(){b.disabled=false;say("Tidak bisa terhubung. Coba lagi.",true)})});
+    if(r.error){back();return say("Email atau kata sandi salah.",true)}
+    go.textContent="Membuka panel…";location.reload()
+  },function(){back();say("Tidak bisa terhubung. Coba lagi.",true)})});
+/* Tampilkan/sembunyikan kata sandi */
+$("lgEye").addEventListener("click",function(){
+  var p=$("lgPass"),show=p.type==="password";p.type=show?"text":"password";
+  this.setAttribute("aria-pressed",show?"true":"false");this.setAttribute("aria-label",show?"Sembunyikan kata sandi":"Tampilkan kata sandi");p.focus()});
+/* Fokus ke email saat kartu masuk tampil */
+(function(){var l=$("lock");if(!l)return;
+  function foc(){if(!l.hidden&&!$("lgEmail").value)try{$("lgEmail").focus({preventScroll:true})}catch(e){}}
+  try{new MutationObserver(foc).observe(l,{attributes:true,attributeFilter:["hidden"]})}catch(e){}
+  setTimeout(foc,400)})();
 /* Tautan reset terbuka: tampilkan form kata sandi baru (panel disembunyikan sampai selesai). */
 (function(){
   var A=window.IB_ARRIVAL||{},h=String(A.hash||"")+"&"+String(A.search||"").replace(/^\?/,"");
