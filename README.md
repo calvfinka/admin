@@ -19,3 +19,8 @@ Alamat: https://admin.gowithdme.com
 Halaman **Admin & Akses** (khusus Pemilik) menambah admin baru dengan peran/izin terbatas. Jalankan `supabase/schema_rbac.sql` (repo situs utama) lebih dulu; panduan lengkap di `AKSES-ADMIN.md` repo situs.
 - `js/rbac-core.js` = katalog izin & preset (harus sama dengan `schema_rbac.sql`); `js/admin-access.js` = gerbang menu + halaman kelola admin.
 - Uji: `node tests/rbac.test.js` (cek logika dan kecocokan dengan `tests/schema_rbac.sql`; salin ulang berkas SQL itu bila SQL berubah).
+
+## Tampilan HP
+- Layar <= 899px (dan HP yang membuka "Situs desktop", 900-1023px berjari): sidebar jadi laci geser dengan tombol hamburger di kiri atas; konten selebar layar; statistik 2 kolom; di Event Terdekat tiap event punya satu tombol "Kelola" yang membuka Edit / Tarik / Duplikat / Hapus. Laptop/PC tidak berubah.
+- Berkas: `css/admin-mobile.css` (dimuat paling akhir), `js/admin-mobile.js` (hanya buka/tutup laci & Kelola), `assets/kontur-soft.svg`.
+- Uji: `node tests/mobile-360.js` (Playwright; set `PW=` bila lokasinya beda). Tangkapan layar masuk `tests/shots/`.
