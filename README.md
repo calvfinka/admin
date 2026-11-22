@@ -14,3 +14,8 @@ Alamat: https://admin.gowithdme.com
 - `js/config.js` di sini harus sama dengan di repo situs utama. Kalau satu berubah, ubah keduanya.
 - Aturan render tulisan di `js/admin-blog.js` harus tetap sama dengan `tools/blog.py` di repo situs utama.
 - Halaman ini tidak diindeks (`noindex`, `robots.txt`).
+
+## Admin tambahan & batas akses
+Halaman **Admin & Akses** (khusus Pemilik) menambah admin baru dengan peran/izin terbatas. Jalankan `supabase/schema_rbac.sql` (repo situs utama) lebih dulu; panduan lengkap di `AKSES-ADMIN.md` repo situs.
+- `js/rbac-core.js` = katalog izin & preset (harus sama dengan `schema_rbac.sql`); `js/admin-access.js` = gerbang menu + halaman kelola admin.
+- Uji: `node tests/rbac.test.js` (cek logika dan kecocokan dengan `tests/schema_rbac.sql`; salin ulang berkas SQL itu bila SQL berubah).

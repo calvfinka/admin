@@ -1,0 +1,21 @@
+/* Pembatasan tampilan menurut izin (penegakan sebenarnya di database). Kelas rb-no-<izin> dipasang ke <body> oleh admin-access.js. */
+body.rb-no-events-delete [data-a="del"],
+body.rb-no-events-publish [data-a="tog"],
+body.rb-no-events-publish [data-save="published"],
+body.rb-no-events-review [data-a="ok"],body.rb-no-events-review [data-a="no"],
+body.rb-no-events-edit [data-a="edit"],
+body.rb-no-events-create [data-a="dup"],body.rb-no-events-create .adm-quick-new,
+body.rb-no-events-feature #f_is_featured,body.rb-no-events-feature #f_boost_score,
+body.rb-no-events-feature #f_sponsor_label,body.rb-no-events-feature #f_featured_until,
+body.rb-no-events-feature label:has(> #f_is_featured),body.rb-no-events-feature label:has(> #f_boost_score),
+body.rb-no-events-feature label:has(> #f_sponsor_label),body.rb-no-events-feature label:has(> #f_featured_until),
+body.rb-no-forum-moderate #fCta{display:none!important}
+#rbRole{margin-left:2px}
+.st-g{border:1px solid var(--line);border-radius:12px;padding:8px 12px 10px;margin:0 0 10px;min-width:0}
+.st-g legend{font-weight:700;font-size:13px;padding:0 6px}
+.st-p{display:flex;gap:8px;align-items:flex-start;padding:5px 0;font-size:14px;cursor:pointer}
+.st-p input{margin-top:3px;flex:none}
+.st-p small{display:block;color:var(--mute,#888);font-size:11.5px;font-family:'JetBrains Mono',monospace}
+.st-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.st-tags span{font-size:11px;font-family:'JetBrains Mono',monospace;background:var(--s1);border:1px solid var(--line);border-radius:99px;padding:2px 8px}
+#stBox{display:grid;gap:10px;margin-top:12px}

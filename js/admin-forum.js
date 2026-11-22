@@ -187,5 +187,5 @@ document.addEventListener("submit",function(ev){var f=ev.target.closest&&ev.targ
 document.addEventListener("change",function(ev){var i=ev.target;if(!i.dataset||i.dataset.sort===undefined)return;
   var v=parseInt(i.value,10);if(isNaN(v)||v<0||v>9999)return msg("Urutan harus angka 0 sampai 9999.","err");
   sb.from("forum_cities").update({sort:v}).eq("name",i.dataset.sort).then(function(r){cfgDone(r,"Urutan disimpan.")})});
-getMe().then(function(m){if(!m||m.profile.role!=="admin")return;ready=true;loadReports()});
+(window.IB_ADMIN_P||getMe().then(function(m){return{m:m,a:m&&m.profile.role==="admin"?{active:true,owner:true,perms:[]}:null}})).then(function(x){if(!x.m||!x.a)return;if(window.RBAC&&!RBAC.canView(x.a,"forum"))return;ready=true;loadReports()});
 })();
