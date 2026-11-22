@@ -24,3 +24,8 @@ Halaman **Admin & Akses** (khusus Pemilik) menambah admin baru dengan peran/izin
 - Layar <= 899px (dan HP yang membuka "Situs desktop", 900-1023px berjari): sidebar jadi laci geser dengan tombol hamburger di kiri atas; konten selebar layar; statistik 2 kolom; di Event Terdekat tiap event punya satu tombol "Kelola" yang membuka Edit / Tarik / Duplikat / Hapus. Laptop/PC tidak berubah.
 - Berkas: `css/admin-mobile.css` (dimuat paling akhir), `js/admin-mobile.js` (hanya buka/tutup laci & Kelola), `assets/kontur-soft.svg`.
 - Uji: `node tests/mobile-360.js` (Playwright; set `PW=` bila lokasinya beda). Tangkapan layar masuk `tests/shots/`.
+
+## Statistik > Browser (lalu lintas browser.gowithdme.com)
+Tab **Browser** di Statistik menampilkan kunjungan, situs yang dibuka, mode proxy/langsung, situs bermasalah, kinerja proxy, dan aliran peristiwa langsung (menyegar tiap 15 detik). Izin: `stats.view` (tidak ada izin baru). Hapus data lama: khusus Pemilik.
+- Jalankan `supabase/schema_browser.sql` dari repo browser (setelah `schema_rbac.sql`). Sebelum itu, tab menampilkan petunjuk pemasangan.
+- Berkas: `js/admin-stats.js` (fungsi `browserView`, `loadBrowser`), tombol tab di `index.html`.
