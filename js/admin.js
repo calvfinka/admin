@@ -5,6 +5,15 @@ var CAT={konser:"Konser",naikgunung:"Naik Gunung",pameran:"Pameran",festival:"Fe
 var MON=["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
 var ST={published:"Terbit",draft:"Draft",pending:"Menunggu",rejected:"Ditolak"};
 var rows=[],srows=null,searchSeq=0,searchT=0,editing=null,editStatus="draft",kind="konser",fk="",view="dash";
+var kel="",GL={poster:"Poster",lineup:"Line-up",harga:"Harga",tiket:"Link tiket"};
+/* kelengkapan data: field penting yang masih kosong. Line-up tidak berlaku untuk pendakian. "menyusul"/"info…" dianggap belum diisi. */
+function gaps(e){var g=[],lu=(e.lineup||"").trim(),pr=(e.price_label||"").trim();
+  if(!(e.poster_url||"").trim())g.push("poster");
+  if(e.category!=="naikgunung"&&(!lu||/menyusul/i.test(lu)))g.push("lineup");
+  if(!pr||/menyusul/i.test(pr)||/^info/i.test(pr))g.push("harga");
+  if(!(e.ticket_url||"").trim())g.push("tiket");
+  return g}
+function upc(e){return e.status!=="rejected"&&(e.end_date||e.event_date)>=tdy()}
 /* "hari ini" menurut WIB, sama dengan situs publik (bukan jam perangkat admin) */
 function tdy(){return new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Jakarta"}).format(new Date())}
 function fd(s){if(!s)return"";var d=new Date(s+"T00:00:00");return d.getDate()+" "+MON[d.getMonth()]+" "+d.getFullYear()}
@@ -58,7 +67,7 @@ function badge(e){return'<span class="badge '+(e.status==="published"?"pub":e.st
 function detail(e){return e.category!=="naikgunung"?(e.genre||""):[e.mountain,e.altitude_mdpl?e.altitude_mdpl+" mdpl":"",DIF[e.difficulty],e.quota?"kuota "+e.quota:"",e.organizer,e.contact_wa?"WA "+e.contact_wa:""].filter(Boolean).join(" · ")}
 function reason(e){var s=e.event_submissions;s=Array.isArray(s)?s[0]:s;return s&&s.reject_reason||""}
 function who(e){var s=e.event_submissions;s=Array.isArray(s)?s[0]:s;return s&&s.profiles&&s.profiles.nickname?s.profiles.nickname:""}
-function item(e){return'<div class="it"><div class="th" style="'+(e.poster_url?"background-image:url('"+esc(e.poster_url).replace(/'/g,"%27")+"')":"")+'"></div><div class="ib"><b>'+esc(e.title)+'</b><div class="meta">'+CAT[e.category]+' · '+esc(e.cities&&e.cities.name)+' · '+fd(e.event_date)+' '+badge(e)+'</div>'+(detail(e)?'<div class="meta">'+esc(detail(e))+'</div>':'')+(who(e)?'<div class="meta">Diajukan oleh '+esc(who(e))+'</div>':'')+(e.status==="rejected"&&reason(e)?'<div class="meta" style="color:var(--err)">Alasan: '+esc(reason(e))+'</div>':'')
+function item(e){return'<div class="it"><div class="th" style="'+(e.poster_url?"background-image:url('"+esc(e.poster_url).replace(/'/g,"%27")+"')":"")+'"></div><div class="ib"><b>'+esc(e.title)+'</b><div class="meta">'+CAT[e.category]+' · '+esc(e.cities&&e.cities.name)+' · '+fd(e.event_date)+' '+badge(e)+'</div>'+(detail(e)?'<div class="meta">'+esc(detail(e))+'</div>':'')+(upc(e)&&gaps(e).length?'<div class="meta gaps"><span>Belum lengkap:</span> '+gaps(e).map(function(k){return'<span class="badge warn">'+GL[k]+'</span>'}).join(" ")+'</div>':'')+(who(e)?'<div class="meta">Diajukan oleh '+esc(who(e))+'</div>':'')+(e.status==="rejected"&&reason(e)?'<div class="meta" style="color:var(--err)">Alasan: '+esc(reason(e))+'</div>':'')
   +'<button class="btn ghost sm mng" type="button" aria-expanded="false">Kelola</button><div class="row" style="margin-top:6px"><button class="btn ghost sm" data-a="edit" data-id="'+e.id+'">Edit</button>'+(e.status==="pending"||e.status==="rejected"?'<button class="btn sm" data-a="ok" data-id="'+e.id+'">Setujui</button>'+(e.status==="pending"?'<button class="btn ghost sm" data-a="no" data-id="'+e.id+'">Tolak</button>':''):'<button class="btn ghost sm" data-a="tog" data-id="'+e.id+'">'+(e.status==="published"?"Tarik":"Terbitkan")+'</button>')+'<button class="btn ghost sm" data-a="dup" data-id="'+e.id+'">Duplikat</button><button class="btn ghost sm" data-a="del" data-id="'+e.id+'">Hapus</button></div></div></div>'}
 function draw(){
   var n=function(f){return rows.filter(f).length};
@@ -72,13 +81,22 @@ function draw(){
   $("soon").innerHTML=soon.length?soon.map(item).join(""):'<div class="meta">Belum ada event terbit yang akan datang.</div>';
   var q=$("flQ").value.toLowerCase(),st=$("flStatus").value,ct=$("flCity").value;
   var l=srows!==null?srows:rows.filter(function(e){return(!fk||e.category===fk)&&(!st||e.status===st)&&(!ct||String(e.city_id)===ct)&&e.title.toLowerCase().indexOf(q)>-1});
-  $("items").innerHTML=l.length?l.map(item).join(""):'<div class="empty">Tidak ada postingan yang cocok. Ubah filter atau buat postingan baru.</div>';
+  var cnt={any:0,poster:0,lineup:0,harga:0,tiket:0};
+  rows.forEach(function(e){if(!upc(e))return;var g=gaps(e);if(g.length)cnt.any++;g.forEach(function(k){cnt[k]++})});
+  [].forEach.call(document.querySelectorAll("#flFill .tab"),function(t){var c=t.querySelector("b");if(c&&t.dataset.f)c.textContent=cnt[t.dataset.f]});
+  if($("fillCta")){$("fillCta").hidden=!cnt.any;$("nFill").textContent=cnt.any}
+  if(kel){l=l.filter(function(e){return upc(e)&&(kel==="any"?gaps(e).length>0:gaps(e).indexOf(kel)>-1)}).sort(function(a,b){return a.event_date<b.event_date?-1:a.event_date>b.event_date?1:0});
+    if($("flCount"))$("flCount").textContent=l.length+" event mendatang perlu dilengkapi, terdekat dulu"}
+  else if(srows===null&&$("flCount"))$("flCount").textContent="";
+  $("items").innerHTML=l.length?l.map(item).join(""):'<div class="empty">'+(kel?"Semua event di filter ini sudah lengkap. Kerja bagus!":"Tidak ada postingan yang cocok. Ubah filter atau buat postingan baru.")+'</div>';
 }
 function load(){return sb.from("events").select("*,cities(name),event_submissions(user_id,reject_reason,profiles(nickname))").order("event_date",{ascending:false}).then(function(r){if(r.error)msg(friendlyErr(r.error),"err");rows=r.data||[];draw();dbSearch(true)})}
 document.addEventListener("click",function(ev){var b=ev.target.closest("button");if(!b)return;
   if(b.dataset.v){if(b.dataset.v==="form")newPost(kind);else go(b.dataset.v)}
   if(b.dataset.new)newPost(b.dataset.new);
   if(b.dataset.kind)setKind(b.dataset.kind);
+  if(b.closest("#flFill")&&b.dataset.f!==undefined){kel=b.dataset.f;[].forEach.call(document.querySelectorAll("#flFill .tab"),function(t){t.classList.toggle("on",t===b)});draw()}
+  if(b.dataset.fillgo){kel="any";go("list");[].forEach.call(document.querySelectorAll("#flFill .tab"),function(t){t.classList.toggle("on",t.dataset.f==="any")});draw()}
   if(b.dataset.k!==undefined&&b.closest("#flKind")){fk=b.dataset.k;[].forEach.call(document.querySelectorAll("#flKind .tab"),function(t){t.classList.toggle("on",t===b)});draw()}
   if(b.dataset.a){var e=rows.filter(function(x){return x.id===b.dataset.id})[0];if(!e)return;
     if(b.dataset.a==="edit")fill(e);
@@ -108,7 +126,7 @@ function dbSearch(quiet){
     if(my!==searchSeq)return;
     if(r.error){srows=null;draw();if(!quiet)msg(friendlyErr(r.error),"err");return}
     srows=(r.data&&r.data.rows)||[];draw();
-    if($("flCount"))$("flCount").textContent=(r.data&&r.data.total!=null?r.data.total:srows.length)+" hasil";
+    if($("flCount")&&!kel)$("flCount").textContent=(r.data&&r.data.total!=null?r.data.total:srows.length)+" hasil";
   });
 }
 function dbSearchSoon(){clearTimeout(searchT);searchT=setTimeout(dbSearch,280)}

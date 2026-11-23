@@ -101,3 +101,15 @@ html{-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;text-size-adjust:1
 }
 
 @media (prefers-reduced-motion:reduce){.adm-body *{transition:none!important;animation:none!important}}
+
+
+/* Filter kelengkapan data (tab Postingan) */
+#flFill{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;margin-bottom:8px}
+#flFill::-webkit-scrollbar{display:none}
+#flFill .tab{flex:none;white-space:nowrap;min-height:38px}
+#flFill .tab b{font-size:11px;font-weight:700;min-width:20px;padding:1px 6px;border-radius:99px;background:var(--s2);color:var(--mute);text-align:center}
+#flFill .tab.on b{background:rgba(255,255,255,.22);color:#fff}
+.badge.warn{background:rgba(245,158,11,.16);color:#b45309}
+:root[data-theme="dark"] .badge.warn{color:#fbbf24}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .badge.warn{color:#fbbf24}}
+.it .gaps{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;margin-top:4px}
