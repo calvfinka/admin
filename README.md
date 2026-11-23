@@ -34,3 +34,8 @@ Tab **Browser** di Statistik menampilkan kunjungan, situs yang dibuka, mode prox
 Tab **Moderasi** di Statistik: tambah/hapus situs di daftar blokir atau peringatan, tindak lanjuti laporan pengguna browser, dan lihat jumlah penolakan. Kartu **Pop-up iklan diblokir** menampilkan tujuan iklan teratas (tombol Blokir) dan situs yang paling sering memicunya (tombol Izinkan pop-up = kecualikan dari pemblokir pop-up sentuhan). Butuh `schema_browser.sql` lalu `schema_moderasi.sql` terbaru (repo browser); tanpa itu kartu menampilkan petunjuk, bagian lain tetap jalan. Membaca: `stats.view`; mengubah, menutup laporan, dan menghapus: khusus Pemilik (ditegakkan di database).
 - Jalankan `supabase/schema_moderasi.sql` dari repo browser (setelah `schema_browser.sql`). Sebelum itu, tab menampilkan petunjuk pemasangan.
 - Berkas: `js/admin-moderasi.js` (dihubungkan lewat `window.ADM_MOD`), perubahan kecil di `js/admin-stats.js` (cabang `tab==="mod"`), tombol tab di `index.html`.
+
+## Iklan & Lencana
+Menu **Iklan & Lencana** (izin `sponsor.view` melihat, `sponsor.manage` mengubah): peta penempatan di situs, formulir dengan pratinjau yang sama persis dengan situs, jadwal, target kota, bobot, aktif/nonaktif, hitungan klik. Kartu Lead Sponsor punya tombol **Buat lencana iklan** (terisi sesuai paket).
+- Jalankan `supabase/schema_iklan.sql` dari repo situs dulu. Sebelum itu tab menampilkan petunjuk.
+- `js/ads-core.js` harus identik dengan repo situs. Uji: `node tests/ads.test.js` (salin ulang `tests/schema_iklan.sql` bila SQL berubah) dan `node tests/ads-browser.js`.

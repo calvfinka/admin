@@ -42,6 +42,7 @@
 
   function card(r){
     var wa=r.contact_wa?'<a class="btn pri sm" href="https://wa.me/'+esc(r.contact_wa)+'?text='+encodeURIComponent("Halo, saya dari GoWithDME soal pesanan promosi "+(r.order_code||"")+" ("+(r.event_title||"")+").")+'" target="_blank" rel="noopener noreferrer">Chat WhatsApp</a>':"";
+    var adb=window.ADM_ADS?'<button class="btn sm" type="button" data-ad-lead="'+esc(r.id)+'">Buat lencana iklan</button>':"";
     var mail=r.contact_email?'<a href="mailto:'+esc(r.contact_email)+'">'+esc(r.contact_email)+'</a>':"";
     var chips=[PKG[r.package]||r.package,r.city,r.weeks?r.weeks+" minggu":""].filter(Boolean).map(function(c){return'<span class="sp-chip">'+esc(c)+'</span>'}).join("")+
       (r.est_total_idr!=null?'<span class="sp-chip money">Estimasi '+esc(rp(r.est_total_idr))+'</span>':"");
@@ -59,7 +60,7 @@
       '<div class="sp-hd"><div><h3>'+esc(r.organizer_name)+'</h3><p>'+esc(r.event_title||"")+'</p></div>'+
         '<span class="badge'+(r.status==="new"?" adm":r.status==="won"?" pub":"")+'">'+esc(STATUS[r.status]||r.status)+'</span></div>'+
       '<div class="sp-chips">'+chips+'</div>'+
-      '<div class="sp-contact">'+wa+mail+'<span class="sp-code">'+esc(r.order_code||"(tanpa kode)")+' · '+esc(when(r.created_at))+'</span></div>'+
+      '<div class="sp-contact">'+wa+adb+mail+'<span class="sp-code">'+esc(r.order_code||"(tanpa kode)")+' · '+esc(when(r.created_at))+'</span></div>'+
       (r.budget_note?'<div class="sp-note">Catatan pemohon: '+linkify(r.budget_note)+'</div>':"")+
       '<div class="sp-grid">'+
         '<div class="sp-box"><h4>Tindak lanjut</h4>'+
@@ -135,6 +136,7 @@
     if(b.dataset.v==="sponsor")load(true);
     if(b.dataset.sp!==undefined&&b.closest("#spTabs")){filter=b.dataset.sp;draw()}
     if(b.id==="spRefresh")load(true);
+    if(b.dataset.adLead&&window.ADM_ADS)return ADM_ADS.fromLead(lead(b.dataset.adLead));
     var c=b.closest(".sp-card");
     if(b.dataset.save&&c){
       var paid=c.querySelector('[data-f="paid"]').checked,amt=val(c,"amount").trim();

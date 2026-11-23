@@ -62,7 +62,7 @@
   var VIEW_PERMS={
     dash:null,stats:["stats.view"],review:["events.review"],
     forum:["forum.moderate","forum.ban","forum.config"],words:["words.view","words.manage"],
-    sponsor:["sponsor.view","sponsor.manage"],list:["events.view"],form:["events.create","events.edit"],
+    sponsor:["sponsor.view","sponsor.manage"],iklan:["sponsor.view","sponsor.manage"],list:["events.view"],form:["events.create","events.edit"],
     blog:["blog.manage"],arsip:["arsip.manage"],admins:"owner"
   };
   var ACTION_PERMS={ /* tombol aksi di daftar event: data-a -> izin */
