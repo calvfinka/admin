@@ -145,7 +145,8 @@ $("fEv").onsubmit=function(e){e.preventDefault();var d={};saveAs=(e.submitter&&e
   d.source_ig=d.source_ig&&d.source_ig.replace(/^@/,"");d.city_id=+d.city_id;d.altitude_mdpl=d.altitude_mdpl?+d.altitude_mdpl:null;d.quota=d.quota?+d.quota:null;
   if(d.contact_wa){var w=d.contact_wa.replace(/\D/g,"");if(w.charAt(0)==="0")w="62"+w.slice(1);if(!/^62\d{8,13}$/.test(w))return msg("Nomor WhatsApp tidak valid.","err");d.contact_wa=w}
   if(d.end_date&&d.end_date<d.event_date)return msg("Tanggal selesai tidak boleh sebelum tanggal mulai.","err");
-  if(kind==="naikgunung"||kind==="pameran"){d.genre=d.lineup=null}if(kind!=="naikgunung"){d.mountain=d.altitude_mdpl=d.difficulty=d.duration=d.quota=d.organizer=d.contact_wa=null}
+  if(kind==="naikgunung"||kind==="pameran"){d.genre=d.lineup=null}if(kind!=="naikgunung"){d.mountain=d.altitude_mdpl=d.difficulty=d.duration=d.quota=d.contact_wa=null}
+  if(saveAs!=="draft"&&!d.organizer)return msg("Penyelenggara wajib diisi sebelum terbit. Untuk perorangan, tulis \"Perorangan\".","err");
   d.category=kind;d.status=saveAs;
   if($("f_is_featured")&&$("f_is_featured")!==document.documentElement){d.is_featured=!!$("f_is_featured").checked;d.boost_score=Math.max(0,Math.min(100,parseInt(($("f_boost_score")||{}).value,10)||0))}
   /* Anti-duplikat: kota + tanggal mulai + 10 huruf/angka pertama judul yang sama dengan postingan lain */
