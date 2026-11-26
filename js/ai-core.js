@@ -1,6 +1,6 @@
 /* Inti menu AI di panel admin (murni, tanpa DOM, bisa diuji di Node: tests/ai-core.test.js).
    Mengolah hasil rpc admin_ai_* (repo ai.gowithdme.com: supabase/admin_ai.sql) menjadi angka dan label yang siap ditampilkan.
-   Tidak ada fungsi di sini yang memegang isi chat: data yang masuk hanya agregat dan pasangan tanya-jawab yang sengaja dinilai pengguna. */
+   Fungsi statistik hanya memegang agregat; fungsi person dan isMissingChat hanya membentuk label dari hasil rpc admin_ai_people/admin_ai_person (supabase/admin_ai_chat.sql). */
 (function(root,factory){
   if(typeof module==="object"&&module.exports)module.exports=factory();else root.AI_CORE=factory();
 })(typeof self!=="undefined"?self:this,function(){
@@ -62,6 +62,13 @@
   function isMissing(msg){return /admin_ai_|ai_usage|schema cache|does not exist|Could not find/i.test(String(msg||""))}
   function isDenied(msg){return /hanya pemilik|42501|permission denied/i.test(String(msg||""))}
 
-  return{TOPIC:TOPIC,DEVICE:DEVICE,MODE:MODE,ERR:ERR,REASON:REASON,HEALTH:HEALTH,label:label,pct:pct,ms:ms,tok:tok,rp:rp,cost:cost,
+  /* Percakapan per orang: nama tampil, inisial avatar, kunci unik (akun login atau perangkat tamu), label kota. */
+  function personName(p){p=p||{};var n=String(p.name||"").trim();return n||(p.user_id?"(tanpa nama)":"Tamu (belum login)")}
+  function personInitial(p){p=p||{};var n=String(p.name||"").trim();return n?n.charAt(0).toUpperCase():(p.user_id?"?":"T")}
+  function personKey(p){p=p||{};return p.user_id?String(p.user_id):(p.device?"d:"+p.device:"")}
+  function placeLabel(p){p=p||{};var a=[p.city,p.region].filter(Boolean);return a.length?a.join(", "):"Lokasi tidak diketahui"}
+  function isMissingChat(msg){return /admin_ai_people|admin_ai_person|ai_chat_|schema cache|does not exist|Could not find/i.test(String(msg||""))}
+
+  return{personName:personName,personInitial:personInitial,personKey:personKey,placeLabel:placeLabel,isMissingChat:isMissingChat,TOPIC:TOPIC,DEVICE:DEVICE,MODE:MODE,ERR:ERR,REASON:REASON,HEALTH:HEALTH,label:label,pct:pct,ms:ms,tok:tok,rp:rp,cost:cost,
     peakHours:peakHours,weekly:weekly,shares:shares,ratingSummary:ratingSummary,errPct:errPct,healthRows:healthRows,isMissing:isMissing,isDenied:isDenied};
 });

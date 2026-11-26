@@ -54,4 +54,18 @@ t("label topik: semua label yang dikeluarkan Worker punya nama Indonesia",()=>{
   ["mobile","tablet","desktop","?"].forEach(k=>assert(C.DEVICE[k],k));
   ["busy","kuota","down","auth"].forEach(k=>assert(C.ERR[k],k));
   ["ngarang","salah","kurang","tanpa"].forEach(k=>assert(C.REASON[k],k))});
+
+t("percakapan: nama, inisial, kunci, lokasi, dan tamu",()=>{
+  assert.strictEqual(C.personName({name:" Budi "}),"Budi");assert.strictEqual(C.personName({user_id:"u"}),"(tanpa nama)");assert.strictEqual(C.personName({device:"d"}),"Tamu (belum login)");
+  assert.strictEqual(C.personInitial({name:"budi"}),"B");assert.strictEqual(C.personKey({user_id:"u1",device:"d"}),"u1");assert.strictEqual(C.personKey({device:"d"}),"d:d");assert.strictEqual(C.personKey({}),"");
+  assert.strictEqual(C.placeLabel({city:"Bandung",region:"Jawa Barat"}),"Bandung, Jawa Barat");assert.strictEqual(C.placeLabel({}),"Lokasi tidak diketahui");
+  assert.ok(C.isMissingChat("Could not find the function public.admin_ai_people"));assert.ok(!C.isMissingChat("Hanya pemilik."))});
+t("SQL percakapan: tiap fungsi admin khusus pemilik, tercatat di audit, tabel tertutup untuk browser",()=>{
+  const fs=require("fs"),sql=fs.readFileSync(__dirname+"/../supabase/admin_ai_chat.sql","utf8");
+  ["admin_ai_people","admin_ai_person","admin_ai_person_delete"].forEach(f=>{
+    const b=sql.match(new RegExp("function "+f+"\\([\\s\\S]*?end \\$\\$;"))[0];
+    assert(b.includes("is_owner()"),f+" tanpa is_owner()");assert(b.includes("_rbac_log("),f+" tanpa audit")});
+  assert(/alter table ai_chat_messages enable row level security/.test(sql));
+  assert(/revoke all on ai_chat_sessions, ai_chat_messages from anon, authenticated/.test(sql));
+  assert(!/create policy/i.test(sql),"jangan beri policy ke tabel chat")});
 console.log("\n"+n+" uji lulus"+(process.exitCode?" (ADA YANG GAGAL)":""));

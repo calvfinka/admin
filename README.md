@@ -39,3 +39,11 @@ Tab **Moderasi** di Statistik: tambah/hapus situs di daftar blokir atau peringat
 Menu **Iklan & Lencana** (izin `sponsor.view` melihat, `sponsor.manage` mengubah): peta penempatan di situs, formulir dengan pratinjau yang sama persis dengan situs, jadwal, target kota, bobot, aktif/nonaktif, hitungan klik. Kartu Lead Sponsor punya tombol **Buat lencana iklan** (terisi sesuai paket).
 - Jalankan `supabase/schema_iklan.sql` dari repo situs dulu. Sebelum itu tab menampilkan petunjuk.
 - `js/ads-core.js` harus identik dengan repo situs. Uji: `node tests/ads.test.js` (salin ulang `tests/schema_iklan.sql` bila SQL berubah) dan `node tests/ads-browser.js`.
+
+## AI (Dea) > Percakapan (isi chat per orang)
+Tab **Percakapan** (khusus Pemilik): daftar orang (foto, nama, kota, jumlah chat/pesan), cari nama atau kota, buka riwayat chat per orang, dan tombol hapus riwayat satu orang. Tamu yang belum login tampil sebagai "Tamu" per perangkat.
+- Jalankan `supabase/admin_ai_chat.sql` (setelah `schema_rbac.sql` dan `admin_ai.sql`). Pasang Worker lewat `PATCH-worker-chat-log.md`. Sebelum itu, tab menampilkan petunjuk pemasangan.
+- Setiap membuka daftar atau riwayat tercatat di `admin_audit` (`ai.people.list`, `ai.chat.view`, `ai.chat.delete`) dan log itu tidak bisa diubah.
+- Masa simpan 90 hari (`ai_chat_purge`, jadwalkan lewat pg_cron; baris perintahnya ada di akhir SQL).
+- Sebelum dipakai: perbarui halaman Privasi dan tampilkan pemberitahuan persetujuan di ai.gowithdme.com (permintaan hapus data lewat `personal@gowithdme.com` bisa dilayani dengan tombol hapus).
+- Berkas: `js/admin-ai.js` (tab), `js/ai-core.js` (label murni), `tests/ai-core.test.js`.

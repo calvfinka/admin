@@ -1,7 +1,7 @@
 /* Panel Admin > AI (khusus Pemilik): angka dan pola pemakaian asisten Dea di ai.gowithdme.com.
    Data dari supabase/admin_ai.sql (repo ai.gowithdme.com): admin_ai_stats, admin_ai_review_list/set, admin_ai_runs.
-   PRINSIP: hanya ANGKA dan POLA. Tidak ada isi chat, nama, foto, lokasi, atau riwayat per orang di halaman ini.
-   Satu-satunya teks yang tampil adalah pasangan tanya-jawab yang SENGAJA dinilai pengguna (👍/👎) dan sudah disamarkan di database.
+   Tab Percakapan (admin_ai_people / admin_ai_person / admin_ai_person_delete, supabase/admin_ai_chat.sql): isi chat, nama, foto, kota, dan riwayat per orang.
+   Tab lain tetap angka dan pola; satu-satunya teks lain adalah pasangan tanya-jawab yang SENGAJA dinilai pengguna (👍/👎).
    Hanya Pemilik (ditegakkan di database lewat is_owner(), bukan cuma disembunyikan di tampilan). Logika murni: js/ai-core.js. */
 (function(){
 var C=window.AI_CORE,box=document.getElementById("v_ai");
@@ -10,7 +10,8 @@ var $=function(i){return document.getElementById(i)};
 var NF=new Intl.NumberFormat("id-ID"),MON=["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
 var WORKER=((window.IB_CONFIG&&window.IB_CONFIG.AI_WORKER_URL)||"https://dme-ai.calvfinka.workers.dev").replace(/\/+$/,"");
 var S={tab:"ringkas",days:30,stats:null,loading:false,fail:"",rk:"pending",rows:[],total:0,roff:0,rloading:false,rfail:"",open:{},runs:null,rufail:"",health:null,hloading:false,hfail:"",
-  price:{i:0,o:0}};
+  price:{i:0,o:0},
+  pq:"",people:[],ptotal:0,poff:0,pload:false,pfail:"",who:null,chat:null,cload:false,cfail:""};
 try{var sp=JSON.parse(localStorage.getItem("gwm_ai_price")||"{}");S.price.i=Math.max(0,+sp.i||0);S.price.o=Math.max(0,+sp.o||0)}catch(e){}
 function n(x){return NF.format(+x||0)}
 function dm(s){var d=new Date(s+"T00:00:00");return d.getDate()+" "+MON[d.getMonth()]}
@@ -53,7 +54,7 @@ function summary(){
     (wk.length>1?card("Per minggu",'<div class="hb">'+wk.map(function(w){return'<div class="hr"><span class="hl">Minggu '+dm(w.week)+'</span><b>'+n(w.req)+' <small>permintaan · '+n(w.chats)+" chat baru</small></b></div>"}).join("")+"</div>","Senin sampai Minggu. Perangkat unik tidak dijumlahkan per minggu agar tidak terhitung ganda."):"")+
     '<div class="g2s">'+card("Jam ramai",hours(D.hours||[]),pk.length?"Paling ramai: "+pk.map(function(x){return x.text}).join(", ")+" WIB.":"Belum ada data.")+
     card("Perangkat",hbars(C.shares(D.devices,C.DEVICE)),"Dikelompokkan kasar dari jenis browser (HP, tablet, laptop/PC).")+"</div>"+
-    '<div class="g2s">'+card("Topik paling sering",hbars(C.shares(D.topics,C.TOPIC)),"Satu label per pesan dari daftar tetap; isi pesannya tidak disimpan. \"Perlu perhatian\" hanya hitungan, tanpa identitas.")+
+    '<div class="g2s">'+card("Topik paling sering",hbars(C.shares(D.topics,C.TOPIC)),"Satu label per pesan dari daftar tetap. \"Perlu perhatian\" di sini hanya hitungan; isi chatnya ada di tab Percakapan.")+
     card("Mode yang dipakai",hbars(C.shares(D.modes,C.MODE)))+"</div>"+
     card("Kualitas jawaban",'<div class="kps">'+kpi("👍 disukai",n(r.up),'<em class="tr up">'+r.upPct+"% dari yang menilai</em>")+kpi("👎 kurang bagus",n(r.down))+kpi("Menunggu tinjauan",n(r.pending),r.pending?'<button class="btn ghost sm" data-rk-go="pending" type="button">Tinjau</button>':"")+kpi("Sudah disetujui",n(r.approved),"","Dipakai sebagai contoh Dea")+"</div>"+
       (r.reasons.length?"<h4>Alasan 👎</h4>"+hbars(r.reasons):'<p class="meta">Belum ada penilaian 👎 beralasan.</p>'),"Hanya dari pengguna login yang menekan 👍/👎.")+
@@ -64,7 +65,42 @@ function summary(){
       '<p class="meta">Token dihitung kasar (1 token ≈ 4 karakter), cukup untuk melihat tren dan boros-tidaknya, bukan untuk tagihan. Isi harga bila memakai paket berbayar; tersimpan di browser ini saja.</p>'+
       "<h4>Penyebab gagal</h4>"+((p.errors||[]).length?hbars(C.shares(p.errors,C.ERR)):'<p class="meta">Tidak ada kegagalan tercatat.</p>')+
       "<h4>Per model</h4>"+((p.by_model||[]).length?'<div class="hb">'+p.by_model.map(function(m){return'<div class="hr"><span class="hl">'+esc(m.k)+"</span><b>"+n(m.n)+" <small>permintaan · gagal "+n(m.fail)+" · respons pertama "+C.ms(m.ttft_p50)+"</small></b></div>"}).join("")+"</div>":'<p class="meta">Belum ada data.</p>'))+
-    '<div class="card sc"><h3>Yang sengaja tidak ada di sini</h3><p class="meta">Isi chat, nama atau foto pengguna, lokasi, dan riwayat per orang. Halaman ini hanya menampilkan angka dan pola. Pencatatan tidak menyimpan isi pesan, alamat IP, maupun ID akun.</p></div>'}
+    '<div class="card sc"><h3>Soal privasi</h3><p class="meta">Ringkasan ini hanya angka dan pola. Isi chat, nama, foto, kota, dan riwayat per orang ada di tab Percakapan (khusus Pemilik, setiap pembukaan tercatat di log audit, dan riwayat otomatis terhapus sesuai masa simpan).</p></div>'}
+
+/* ---- Percakapan (isi chat per orang) ---- */
+function avatar(p){var u=p.avatar_url;return'<span class="ua"'+(u?' style="background:center/cover url(\''+esc(u).replace(/'/g,"%27")+'\')"':"")+">"+(u?"":esc(C.personInitial(p)))+"</span>"}
+function chatFail(msg,retry){var miss=C.isMissingChat(msg),den=C.isDenied(msg);
+  return'<div class="card"><h3>'+(miss?"Percakapan belum dipasang di Supabase":den?"Hanya untuk Pemilik":"Data percakapan gagal dimuat")+"</h3><p>"+
+    (miss?"Buka Supabase &gt; SQL Editor, jalankan <code>supabase/admin_ai_chat.sql</code> (repo ai.gowithdme.com), lalu muat ulang halaman ini. Isi chat baru tercatat setelah Worker terbaru dipasang.":den?"Akun ini tidak punya akses ke percakapan.":esc(msg||"Coba lagi sebentar lagi."))+
+    '</p><button class="btn" data-retry="'+retry+'" type="button">Coba lagi</button></div>'}
+function peopleView(){
+  var bar='<div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:8px"><label class="f" style="margin:0;flex:1;min-width:180px">Cari nama atau kota<input id="aiQ" type="search" value="'+esc(S.pq)+'" placeholder="mis. Budi atau Bandung"></label><button class="btn pri sm" data-pq="1" type="button" style="align-self:end">Cari</button></div>';
+  var note='<p class="meta">Setiap kali kamu membuka riwayat seseorang, tindakan itu tercatat di log audit (siapa, kapan, riwayat siapa). Gunakan hanya untuk moderasi, keamanan, atau menindaklanjuti laporan; jangan dibagikan ke luar.</p>';
+  if(S.pfail)return bar+chatFail(S.pfail,"people");
+  var list=S.people.length?'<div class="card sc">'+S.people.map(function(p,i){
+    return'<div class="us">'+avatar(p)+'<div class="ub"><b>'+esc(C.personName(p))+"</b>"+(p.user_id?"":' <span class="badge">Tamu</span>')+'<div class="meta">'+[C.placeLabel(p),n(p.sessions)+" chat",n(p.messages)+" pesan","terakhir "+dt(p.last_at)].map(esc).join(" · ")+
+      '</div></div><button class="btn ghost sm" data-who="'+i+'" type="button">Buka</button></div>'}).join("")+"</div>":(S.pload?'<p class="meta">Memuat…</p>':'<p class="meta">Belum ada percakapan tercatat.</p>');
+  return bar+note+list+(S.people.length<S.ptotal?'<div class="row"><button class="btn ghost" data-pmore="1" type="button">Muat lagi ('+n(S.ptotal-S.people.length)+" lagi)</button></div>":"")}
+function chatView(){
+  var P=S.who,h='<div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:8px"><button class="btn ghost sm" data-back="1" type="button">← Semua orang</button><button class="btn ghost sm" data-del="1" type="button" style="color:var(--err)">Hapus riwayat orang ini</button></div>'+
+    '<div class="card sc"><div class="us" style="border-top:0">'+avatar(P)+'<div class="ub"><b>'+esc(C.personName(P))+"</b>"+(P.user_id?"":' <span class="badge">Tamu</span>')+'<div class="meta">'+[C.placeLabel(P),n(P.sessions)+" chat",n(P.messages)+" pesan"].map(esc).join(" · ")+"</div></div></div></div>";
+  if(S.cfail)return h+chatFail(S.cfail,"chat");
+  if(!S.chat)return h+'<p class="meta">Memuat…</p>';
+  var C0=S.chat,sid=null,out="";
+  if(C0.more)out+='<div class="row"><button class="btn ghost sm" data-older="1" type="button">Muat pesan lebih lama</button></div>';
+  (C0.messages||[]).forEach(function(m){
+    if(m.session_id!==sid){sid=m.session_id;out+='<p class="meta" style="margin-top:12px">— '+dt(m.created_at)+(m.mode?" · "+esc(C.label(C.MODE,m.mode)):"")+(m.city?" · "+esc(m.city):"")+" —</p>"}
+    var me=m.role==="user";
+    out+='<div style="display:flex;justify-content:'+(me?"flex-end":"flex-start")+';margin:4px 0"><div style="max-width:85%;padding:8px 12px;border-radius:14px;white-space:pre-wrap;overflow-wrap:anywhere;background:'+(me?"var(--ember)":"var(--s2)")+";color:"+(me?"#12302a":"inherit")+'"><small class="meta" style="display:block">'+(me?esc(C.personName(P)):"Dea")+" · "+dt(m.created_at)+"</small>"+esc(m.content)+"</div></div>"});
+  return h+(out||'<p class="meta">Belum ada pesan.</p>')}
+function orang(){return S.who?chatView():peopleView()}
+function loadPeople(more){if(S.pload)return;S.pload=true;S.pfail="";if(!more){S.people=[];S.ptotal=0;S.poff=0}render();
+  return rpc("admin_ai_people",{p_q:S.pq||null,p_limit:20,p_offset:S.poff}).then(function(d){S.people=S.people.concat(d.rows||[]);S.ptotal=d.total||0;S.poff=S.people.length})
+    .catch(function(e){S.pfail=e&&e.message||"Gagal"}).then(function(){S.pload=false;render()})}
+function loadChat(older){if(S.cload||!S.who)return;S.cload=true;S.cfail="";var before=older&&S.chat&&S.chat.messages.length?S.chat.messages[0].id:null;if(!older)S.chat=null;render();
+  return rpc("admin_ai_person",{p_user:S.who.user_id||null,p_device:S.who.user_id?null:S.who.device,p_limit:60,p_before:before}).then(function(d){
+    S.chat=older&&S.chat?{messages:(d.messages||[]).concat(S.chat.messages),more:!!d.more}:{messages:d.messages||[],more:!!d.more}})
+    .catch(function(e){S.cfail=e&&e.message||"Gagal"}).then(function(){S.cload=false;render()})}
 
 /* ---- Tinjau jawaban ---- */
 var RK={pending:"Menunggu 👍",approved:"Disetujui",down:"Ditandai 👎"};
@@ -107,7 +143,7 @@ function render(){
   var rb=$("aiRange");if(rb)rb.hidden=S.tab!=="ringkas";
   [].forEach.call(document.querySelectorAll("#aiTabs [data-t]"),function(b){b.classList.toggle("on",b.dataset.t===S.tab)});
   [].forEach.call(document.querySelectorAll("#aiRange [data-d]"),function(b){b.classList.toggle("on",+b.dataset.d===S.days)});
-  var h=S.tab==="ringkas"?summary():S.tab==="tinjau"?review():S.tab==="latih"?training():status();
+  var h=S.tab==="ringkas"?summary():S.tab==="orang"?orang():S.tab==="tinjau"?review():S.tab==="latih"?training():status();
   var b=$("aiBody");if(b)b.innerHTML=h}
 function loadStats(){S.loading=true;S.fail="";render();
   return rpc("admin_ai_stats",{p_days:S.days}).then(function(d){S.stats=d}).catch(function(e){S.fail=e&&e.message||"Gagal"}).then(function(){S.loading=false;render()})}
@@ -121,6 +157,7 @@ function loadHealth(){S.hloading=true;S.hfail="";render();
     .then(function(){clearTimeout(tm);S.hloading=false;render()})}
 function go(t){S.tab=t;
   if(t==="ringkas"&&!S.stats&&!S.loading)loadStats();
+  else if(t==="orang"&&!S.people.length&&!S.pload&&!S.pfail)loadPeople();
   else if(t==="tinjau"&&!S.rows.length&&!S.rloading)loadReview();
   else if(t==="latih"&&!S.runs)loadRuns();
   else if(t==="status"&&!S.hloading)loadHealth();
@@ -130,11 +167,21 @@ box.addEventListener("click",function(e){
   var b=e.target.closest("button");if(!b)return;
   if(b.dataset.t){go(b.dataset.t);return}
   if(b.dataset.d){S.days=+b.dataset.d;S.stats=null;loadStats();return}
+  if(b.dataset.pq){S.pq=($("aiQ")||{}).value||"";loadPeople();return}
+  if(b.dataset.pmore){loadPeople(true);return}
+  if(b.dataset.who){S.who=S.people[+b.dataset.who]||null;S.chat=null;loadChat();return}
+  if(b.dataset.back){S.who=null;S.chat=null;S.cfail="";render();return}
+  if(b.dataset.older){loadChat(true);return}
+  if(b.dataset.del){
+    if(!S.who||!window.confirm("Hapus SELURUH riwayat chat "+C.personName(S.who)+"? Tidak bisa dibatalkan."))return;
+    b.disabled=true;
+    rpc("admin_ai_person_delete",{p_user:S.who.user_id||null,p_device:S.who.user_id?null:S.who.device}).then(function(){S.who=null;S.chat=null;S.people=[];loadPeople();if(window.toast)toast("Riwayat dihapus.")})
+      .catch(function(er){b.disabled=false;if(window.msg)msg(window.friendlyErr?friendlyErr(er):(er&&er.message)||"Gagal","err")});return}
   if(b.dataset.rk){S.rk=b.dataset.rk;loadReview();return}
   if(b.dataset.rkGo){S.rk=b.dataset.rkGo;S.tab="tinjau";loadReview();return}
   if(b.dataset.more){loadReview(true);return}
   if(b.dataset.exp){S.open[b.dataset.exp]=1;render();return}
-  if(b.dataset.retry){var k=b.dataset.retry;if(k==="stats")loadStats();else if(k==="review")loadReview();else if(k==="runs")loadRuns();else loadHealth();return}
+  if(b.dataset.retry){var k=b.dataset.retry;if(k==="stats")loadStats();else if(k==="review")loadReview();else if(k==="runs")loadRuns();else if(k==="people")loadPeople();else if(k==="chat")loadChat();else loadHealth();return}
   if(b.dataset.act){
     var act=b.dataset.act,id=b.dataset.id;
     if(act==="delete"&&!window.confirm(S.rk==="pending"?"Tolak dan hapus contoh ini?":"Hapus baris ini dari daftar?"))return;
@@ -142,6 +189,7 @@ box.addEventListener("click",function(e){
     rpc("admin_ai_review_set",{p_id:id,p_action:act}).then(function(){S.rows=S.rows.filter(function(r){return r.id!==id});S.total=Math.max(0,S.total-1);S.stats=null;S.runs=null;render();if(window.toast)toast("Tersimpan.")})
       .catch(function(er){b.disabled=false;if(window.msg)msg(window.friendlyErr?friendlyErr(er):(er&&er.message)||"Gagal","err")})}
 });
+box.addEventListener("keydown",function(e){if(e.key==="Enter"&&e.target.id==="aiQ"){e.preventDefault();S.pq=e.target.value||"";loadPeople()}});
 box.addEventListener("change",function(e){
   if(e.target.id!=="aiPi"&&e.target.id!=="aiPo")return;
   S.price.i=Math.max(0,+($("aiPi")||{}).value||0);S.price.o=Math.max(0,+($("aiPo")||{}).value||0);
