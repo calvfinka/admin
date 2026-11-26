@@ -87,4 +87,5 @@ if(!sqlPath){console.log("(SQL tidak ditemukan; pemeriksaan silang dilewati)")}e
     const b=sql.match(/function admin_staff_set[\s\S]*?end \$\$;/)[0];
     ["sudah pemilik","akun sendiri","Izin tidak dikenal","di masa depan"].forEach(s=>assert(b.includes(s),s))});
 }
+t("menu AI khusus pemilik (tidak bocor ke peran mana pun)",()=>{assert(R.canView(owner,"ai"));R.PRESETS.forEach(p=>assert(!R.canView(mk(p.key),"ai"),"ai bocor ke "+p.key))});
 console.log("\n"+n+" uji lulus"+(process.exitCode?" (ADA YANG GAGAL)":""));

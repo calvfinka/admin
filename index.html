@@ -75,6 +75,7 @@
   <div class="adm-sgrp">
     <div class="adm-slbl">Pengaturan</div>
     <button data-v="admins" id="admNavAdmins" type="button" hidden><svg class="i" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Admin &amp; Akses</span></button>
+    <button data-v="ai" id="admNavAi" type="button" hidden><svg class="i" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 15l.7 2.1L22 18l-2.3.9L19 21l-.7-2.1L16 18l2.3-.9z"/></svg><span>AI (Dea)</span></button>
   </div>
   <div class="adm-sfoot" id="admSFoot">
     <div class="adm-swho" id="admWhoM" hidden><b></b><span></span></div>
@@ -269,6 +270,13 @@
   <div id="stBody"><p class="meta">Memuat…</p></div>
 </section>
 
+<section id="v_ai" hidden>
+  <div class="adm-hd"><div><h2>AI (Dea)</h2><p class="meta">Angka dan pola pemakaian asisten di ai.gowithdme.com. Hanya Pemilik. Tidak ada isi chat, nama, foto, atau lokasi pengguna di halaman ini.</p></div></div>
+  <div class="seg" id="aiTabs"><button class="tab on" data-t="ringkas" type="button">Ringkasan</button><button class="tab" data-t="tinjau" type="button">Tinjau jawaban</button><button class="tab" data-t="latih" type="button">Pelatihan</button><button class="tab" data-t="status" type="button">Status model</button></div>
+  <div class="bar" id="aiRange"><button class="tab" data-d="7" type="button">7 hari</button><button class="tab on" data-d="30" type="button">30 hari</button><button class="tab" data-d="90" type="button">90 hari</button></div>
+  <div id="aiBody"><p class="meta">Memuat…</p></div>
+</section>
+
 <section id="v_admins" hidden>
   <div class="adm-hd"><div><h2>Admin &amp; Akses</h2><p class="meta">Tambah admin baru dan atur batas aksesnya. Hanya Pemilik yang bisa membuka halaman ini; batasan ditegakkan di database, bukan hanya disembunyikan di tampilan.</p></div></div>
   <div class="card" id="stAdd" hidden>
@@ -356,5 +364,5 @@
   <button data-v="form" type="button"><i><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></i><span>Buat</span></button>
 </nav>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script>window.supabase||document.write('<script src="https://unpkg.com/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"><\/script>')</script>
-<script src="js/config.js"></script><script src="js/supa.js"></script><script src="js/rbac-core.js"></script><script src="js/admin-access.js"></script><script src="js/word-filter.js"></script><script src="js/gunung-data.js"></script><script src="js/admin.js"></script><script src="js/admin-ux.js"></script><script src="js/admin-forum.js"></script><script src="js/admin-orisinal.js"></script><script src="js/admin-blog.js"></script><script src="js/arsip-san.js"></script><script src="js/admin-arsip.js"></script><script src="js/admin-moderasi.js"></script><script src="js/admin-stats.js"></script><script src="js/admin-words.js"></script><script src="js/monetize-core.js"></script><script src="js/ads-core.js"></script><script src="js/admin-ads.js"></script><script src="js/admin-sponsor.js"></script><script src="js/admin-login.js"></script><script src="js/admin-ui.js"></script><script src="js/admin-mobile.js"></script>
+<script src="js/config.js"></script><script src="js/supa.js"></script><script src="js/rbac-core.js"></script><script src="js/admin-access.js"></script><script src="js/word-filter.js"></script><script src="js/gunung-data.js"></script><script src="js/admin.js"></script><script src="js/admin-ux.js"></script><script src="js/admin-forum.js"></script><script src="js/admin-orisinal.js"></script><script src="js/admin-blog.js"></script><script src="js/arsip-san.js"></script><script src="js/admin-arsip.js"></script><script src="js/admin-moderasi.js"></script><script src="js/admin-stats.js"></script><script src="js/admin-words.js"></script><script src="js/monetize-core.js"></script><script src="js/ads-core.js"></script><script src="js/admin-ads.js"></script><script src="js/admin-sponsor.js"></script><script src="js/ai-core.js"></script><script src="js/admin-ai.js"></script><script src="js/admin-login.js"></script><script src="js/admin-ui.js"></script><script src="js/admin-mobile.js"></script>
 </body></html>

@@ -43,6 +43,7 @@ IB_ADMIN_P.then(function(x){
   if(!R.can(ADMIN,"stats.view")){var kd=$("kpiDash");if(kd){hide(kd.previousElementSibling);hide(kd.nextElementSibling);hide(kd)}}
   if(!R.can(ADMIN,"events.view")){hide($("soon")&&$("soon").closest(".card"));var s5=document.querySelector("#v_dash .st5");if(s5){hide(s5.previousElementSibling);hide(s5)}}
   var ng=document.getElementById("admNavAdmins");if(ng)ng.hidden=!R.canView(ADMIN,"admins");
+  var na=document.getElementById("admNavAi");if(na)na.hidden=!R.canView(ADMIN,"ai");
   var chip=document.getElementById("rbRole");if(chip){chip.textContent=ADMIN.label||"Admin";chip.hidden=false;chip.title=ADMIN.owner?"Akses penuh":(ADMIN.perms||[]).length+" izin"+(ADMIN.expires_at?" · berlaku sampai "+new Date(ADMIN.expires_at).toLocaleDateString("id-ID"):"")}
   /* Sembunyikan grup sidebar yang kosong */
   [].forEach.call(document.querySelectorAll("#admSide .adm-sgrp"),function(g){
