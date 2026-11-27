@@ -10,10 +10,10 @@
 
   /* MODE UJI: true = tombol "Lewati" tampil di layar langkah kedua (aman selama require_owner_passkey = false).
      Ubah ke false SEBELUM 2FA dinyalakan di database. */
-  var ALLOW_SKIP = true;
+  var ALLOW_SKIP = false;
 
   /* DEBUG: true = tampilkan pesan asli dari server di bawah pesan galat (untuk mencari masalah). Ubah ke false bila sudah beres. */
-  var DEBUG = true;
+  var DEBUG = false;
 
   var OK_KEY = "adm_pk_ok";     // sesi ini sudah lolos passkey (hanya cache tampilan, per tab)
   var SKIP_KEY = "adm_pk_skip"; // sesi ini memilih lewati (hanya saat ALLOW_SKIP)
