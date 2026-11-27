@@ -60,10 +60,10 @@ function go(v){view=v;["dash","review","forum","words","sponsor","iklan","list",
 function setKind(k){kind=k;[].forEach.call(document.querySelectorAll(".kind button"),function(b){b.classList.toggle("on",b.dataset.kind===k)});
   [].forEach.call(document.querySelectorAll("[data-for]"),function(f){f.hidden=f.dataset.for==="konser"?(k==="naikgunung"||k==="pameran"):f.dataset.for!==k});
   $("lVenue").firstChild.textContent=k==="naikgunung"?"Basecamp / titik kumpul":"Lokasi / venue"}
-function newPost(k){editing=null;editStatus="draft";$("fEv").reset();pv("");$("fTitle").textContent=k==="naikgunung"?"Pendakian baru":"Event baru: "+(CAT[k]||k);setKind(k);go("form")}
+function newPost(k){editing=null;editStatus="draft";$("fEv").reset();pv("");if(window.EXP)EXP.set([]);$("fTitle").textContent=k==="naikgunung"?"Pendakian baru":"Event baru: "+(CAT[k]||k);setKind(k);go("form")}
 function fill(e,asCopy){editing=asCopy?null:e.id;editStatus=asCopy?"draft":e.status;setKind(e.category);$("fTitle").textContent=asCopy?"Duplikat postingan":"Edit postingan";
-  KEYS.forEach(function(k){$("f_"+k).value=e[k]==null?"":e[k]});if(asCopy)$("f_title").value=e.title+" (salinan)";pv(e.poster_url);go("form")}
-function badge(e){return'<span class="badge '+(e.status==="published"?"pub":e.status==="pending"?"adm":"")+'">'+(ST[e.status]||e.status)+'</span>'+(e.is_community?' <span class="badge">Komunitas</span>':'')+((e.end_date||e.event_date)<tdy()?' <span class="badge">Selesai</span>':'')}
+  KEYS.forEach(function(k){$("f_"+k).value=e[k]==null?"":e[k]});if(asCopy)$("f_title").value=e.title+" (salinan)";pv(e.poster_url);if(window.EXP)EXP.set(e.extra_posters);go("form")}
+function badge(e){return(e.extra_posters&&e.extra_posters.length?'<span class="badge">'+(e.extra_posters.length+1)+' poster</span> ':'')+'<span class="badge '+(e.status==="published"?"pub":e.status==="pending"?"adm":"")+'">'+(ST[e.status]||e.status)+'</span>'+(e.is_community?' <span class="badge">Komunitas</span>':'')+((e.end_date||e.event_date)<tdy()?' <span class="badge">Selesai</span>':'')}
 function detail(e){return e.category!=="naikgunung"?(e.genre||""):[e.mountain,e.altitude_mdpl?e.altitude_mdpl+" mdpl":"",DIF[e.difficulty],e.quota?"kuota "+e.quota:"",e.organizer,e.contact_wa?"WA "+e.contact_wa:""].filter(Boolean).join(" · ")}
 function reason(e){var s=e.event_submissions;s=Array.isArray(s)?s[0]:s;return s&&s.reject_reason||""}
 function who(e){var s=e.event_submissions;s=Array.isArray(s)?s[0]:s;return s&&s.profiles&&s.profiles.nickname?s.profiles.nickname:""}
@@ -141,7 +141,7 @@ var saveAs="draft";
 /* Enter di kolom isian tidak boleh menyimpan diam-diam (browser menekan tombol "Simpan draft" yang pertama, sehingga postingan terbit bisa jadi draft). Simpan hanya lewat tombol. */
 $("fEv").addEventListener("keydown",function(ev){if(ev.key==="Enter"&&ev.target.tagName==="INPUT")ev.preventDefault()});
 $("fEv").onsubmit=function(e){e.preventDefault();var d={};saveAs=(e.submitter&&e.submitter.dataset.save)||(editing?editStatus:"draft");
-  KEYS.forEach(function(k){var v=$("f_"+k).value.trim();d[k]=v===""?null:v});
+  KEYS.forEach(function(k){var v=$("f_"+k).value.trim();d[k]=v===""?null:v});d.extra_posters=window.EXP?EXP.get():[];
   d.source_ig=d.source_ig&&d.source_ig.replace(/^@/,"");d.city_id=+d.city_id;d.altitude_mdpl=d.altitude_mdpl?+d.altitude_mdpl:null;d.quota=d.quota?+d.quota:null;
   if(d.contact_wa){var w=d.contact_wa.replace(/\D/g,"");if(w.charAt(0)==="0")w="62"+w.slice(1);if(!/^62\d{8,13}$/.test(w))return msg("Nomor WhatsApp tidak valid.","err");d.contact_wa=w}
   if(d.end_date&&d.end_date<d.event_date)return msg("Tanggal selesai tidak boleh sebelum tanggal mulai.","err");
