@@ -84,3 +84,17 @@ window.IB_ARRIVAL={hash:location.hash,search:location.search};
     });
   };
 })();
+
+/* Dialog konfirmasi sendiri (pengganti confirm() bawaan browser). Pemakaian: if(!await askConfirm("Hapus?","Ya, hapus"))return; */
+window.askConfirm=function(text,okLabel){
+  return new Promise(function(done){
+    var prev=document.activeElement,s=document.createElement("div");s.className="qsh qcf";
+    s.innerHTML='<div class="qsh-bg"></div><div class="qsh-box" role="alertdialog" aria-modal="true" aria-label="Konfirmasi"><p class="qcf-t"></p><button type="button" data-r="1" class="qcf-ok"></button><button type="button" data-r="0" class="qsh-x">Batal</button></div>';
+    s.querySelector(".qcf-t").textContent=text;s.querySelector(".qcf-ok").textContent=okLabel||"Ya, lanjut";
+    function end(v){document.removeEventListener("keydown",key,true);s.classList.remove("on");setTimeout(function(){s.remove()},180);if(prev&&prev.focus)try{prev.focus()}catch(e){}done(v)}
+    function key(e){if(e.key==="Escape"){e.preventDefault();e.stopPropagation();end(false)}}
+    s.addEventListener("click",function(e){var b=e.target.closest("button[data-r]");if(b)end(b.dataset.r==="1");else if(e.target.classList.contains("qsh-bg"))end(false)});
+    document.addEventListener("keydown",key,true);document.body.appendChild(s);
+    requestAnimationFrame(function(){s.classList.add("on");s.querySelector(".qsh-x").focus()});
+  });
+};

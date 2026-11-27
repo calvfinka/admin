@@ -2,7 +2,7 @@
 (function(){
 var $=function(i){return document.getElementById(i)};
 function say(t,k){if(window.msg)window.msg(t,k)}
-function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+var esc=window.esc;
 function init(){
   var sel=$("f_city_id");if(!sel||$("kotaBaru"))return;
   var lab=sel.closest("label");

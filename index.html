@@ -2,7 +2,7 @@
 <html lang="id"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Panel Admin — GoWithDME</title><meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex, notranslate, nocache"><meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex"><meta name="bingbot" content="noindex, nofollow, noarchive, nosnippet"><meta name="google" content="notranslate nositelinkssearchbox"><meta name="format-detection" content="telephone=no"><meta name="referrer" content="no-referrer"><meta name="author" content="Kalfin Agus Setiawan">
-<link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png"><link rel="icon" href="assets/favicon.ico" sizes="any"><link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#0f1412" media="(prefers-color-scheme: dark)"><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png"><link rel="icon" href="assets/favicon.ico" sizes="any"><link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=JetBrains+Mono:wght@500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="js/theme.js"></script>
@@ -143,7 +143,7 @@
     <div class="card sc">
       <h3>Uji Deteksi Langsung</h3>
       <p class="meta">Uji kalimat termasuk variasi leetspeak (<code>@nj1ng</code>, <code>sl0t g4c0r</code>) atau tanda baca tersamar.</p>
-      <label class="f" style="margin-top:8px"><input id="wfTestInput" type="search" placeholder="Ketik kalimat untuk diuji…"></label>
+      <label class="f" style="margin-top:8px"><input aria-label="Uji kalimat" id="wfTestInput" type="search" placeholder="Ketik kalimat untuk diuji…"></label>
       <div id="wfTestOut"></div>
     </div>
     <div class="card sc">
@@ -172,7 +172,7 @@
     </div>
     <div class="bar" style="margin-top:8px">
       <div id="wfCatTabs" class="bar" style="margin-bottom:0"></div>
-      <input id="wfSearch" type="search" placeholder="Cari kata di kamus…">
+      <input aria-label="Cari kata di kamus" id="wfSearch" type="search" placeholder="Cari kata di kamus…">
     </div>
     <div id="wfWordList"></div>
   </div>
@@ -201,7 +201,7 @@
     </div>
     <div class="f" id="bgTagBox"><span>Tag <i class="meta">opsional, maksimal 8</i></span>
       <div class="bg-tgs" id="bgTagChips"></div>
-      <input id="bgTagIn" type="text" maxlength="30" placeholder="ketik tag, lalu koma atau Enter" enterkeyhint="done" autocomplete="off" autocapitalize="none">
+      <input aria-label="Tambah tag" id="bgTagIn" type="text" maxlength="30" placeholder="ketik tag, lalu koma atau Enter" enterkeyhint="done" autocomplete="off" autocapitalize="none">
       <div class="meta" id="bgTagSugT" hidden>Saran otomatis dari isi tulisan (ketuk untuk menambah):</div>
       <div class="bg-tgs bg-sug" id="bgTagSug"></div>
     </div>
@@ -223,7 +223,7 @@
   <div class="card">
     <h3>Unggah cadangan Blogger</h3>
     <label class="ar-drop" for="arFile"><b>Pilih berkas cadangan (.xml / .atom / .zip)</b><span id="arFileInfo">Ketuk untuk memilih. Ukuran 200 MB pun aman.</span></label>
-    <input class="sr" id="arFile" type="file" accept=".xml,.atom,.zip,application/xml,text/xml,application/zip">
+    <input class="sr" aria-label="Berkas cadangan Blogger" id="arFile" type="file" accept=".xml,.atom,.zip,application/xml,text/xml,application/zip">
     <label class="f">Nama koleksi (niche arsip)<input id="arKoleksi" type="text" maxlength="80" value="ISIBLOGPINDAHANDATIBLOGSPOT"></label>
     <div class="ar-opt">
       <label><input type="checkbox" id="arLive" checked> Terbitkan langsung (tulisan berstatus draft di Blogger tetap draft)</label>
@@ -369,7 +369,7 @@
 </div>
 </div>
 
-<button class="fab" id="fab" data-v="form" type="button" aria-label="Buat event" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Buat event</button>
+<button class="fab" id="fab" data-v="form" type="button" aria-label="Buat baru" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Buat</button>
 <nav class="bnav" id="bnav" hidden aria-label="Menu admin">
   <button data-v="dash" class="on" type="button"><i><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></i><span>Beranda</span></button>
   <button data-v="review" data-g="review,forum,words,sponsor,iklan" type="button"><i><svg class="i" aria-hidden="true"><use href="#i-shield"/></svg></i><span>Tinjau</span><b class="dot" id="bTinjau" hidden></b><b class="dot" id="bPend" hidden></b><b class="dot" id="bFrep" hidden></b></button>

@@ -113,3 +113,8 @@ html{-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;text-size-adjust:1
 :root[data-theme="dark"] .badge.warn{color:#fbbf24}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .badge.warn{color:#fbbf24}}
 .it .gaps{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;margin-top:4px}
+
+/* sesi 5: target sentuh min 44px */
+.adm-main .seg[data-g] button,#flKind .tab,#stRange .tab,#fmTabs .tab,#spTabs .tab,#flFill .tab,.it .row .btn,.lg-out,.ar-search button{min-height:44px}
+.f input,.f select,.adm-body .bar input[type=search],.ar-search input,.hps input{min-height:44px}
+.lg-eye{width:44px;height:44px}

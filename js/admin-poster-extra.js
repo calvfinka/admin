@@ -2,7 +2,7 @@
 (function(){
 var $=function(i){return document.getElementById(i)};
 var list=[],box,grid,hint;
-function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+var esc=window.esc;
 function days(){var a=$("f_event_date").value,b=$("f_end_date").value;if(!a||!b||b<=a)return 1;return Math.round((new Date(b)-new Date(a))/864e5)+1}
 function draw(){
   grid.innerHTML=list.map(function(u,i){

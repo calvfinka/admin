@@ -31,6 +31,35 @@ function resume(){
 res.addEventListener("click",function(){if(pick)pick()});
 resume();
 
+/* Pilih jenis: FAB dan tombol "Buat" di bar bawah menawarkan Event atau Artikel blog. Memakai handler lama (newPost / bgNew). */
+var bypass=false,sheet=null,lastBtn=null;
+function closeSheet(){if(!sheet)return;var s=sheet;sheet=null;s.classList.remove("on");setTimeout(function(){s.remove()},180);document.removeEventListener("keydown",onEsc,true);if(lastBtn&&lastBtn.focus)lastBtn.focus()}
+function onEsc(e){if(e.key==="Escape"){e.preventDefault();closeSheet()}}
+function openSheet(src){
+  if(sheet)return;lastBtn=src;
+  var s=document.createElement("div");s.className="qsh";
+  s.innerHTML='<div class="qsh-bg"></div><div class="qsh-box" role="dialog" aria-modal="true" aria-label="Buat baru"><b>Buat baru</b>'+
+   '<button type="button" data-c="event"><span>Event atau pendakian</span><small>Poster, tanggal, lokasi, tiket</small></button>'+
+   '<button type="button" data-c="blog"><span>Artikel blog</span><small>Tulisan editorial</small></button>'+
+   '<button type="button" data-c="x" class="qsh-x">Batal</button></div>';
+  document.body.appendChild(s);sheet=s;
+  s.addEventListener("click",function(e){
+    var b=e.target.closest("button[data-c]"),c=b&&b.dataset.c;
+    if(!b&&!e.target.classList.contains("qsh-bg"))return;
+    closeSheet();
+    if(c==="event"){bypass=true;try{src.click()}finally{bypass=false}}
+    else if(c==="blog"){var t=document.querySelector('#bnav [data-v="blog"],#admSide [data-v="blog"],.seg [data-v="blog"]');
+      if(t)t.click();setTimeout(function(){var n=$("bgNew");if(n&&!n.hidden)n.click()},120)}
+  });
+  document.addEventListener("keydown",onEsc,true);
+  requestAnimationFrame(function(){s.classList.add("on");var f=s.querySelector("button[data-c]");if(f)f.focus()});
+}
+document.addEventListener("click",function(e){
+  if(bypass)return;
+  var b=e.target.closest("#fab,#bnav button[data-v=\"form\"]");if(!b)return;
+  e.preventDefault();e.stopImmediatePropagation();openSheet(b)
+},true);
+
 /* Pintasan desktop: N = event baru, / = cari di daftar. Tidak aktif saat mengetik, ada dialog, atau di layar sentuh. */
 var desk=window.matchMedia?matchMedia("(min-width:900px) and (pointer:fine)"):null;
 document.addEventListener("keydown",function(e){

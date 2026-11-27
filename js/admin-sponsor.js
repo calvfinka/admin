@@ -10,7 +10,7 @@
   var MON=["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
   var rows=[],events=null,eventsLoading=false,filter="",q="",loaded=false,loading=false,failed="";
 
-  function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+  var esc=window.esc;
   function rp(n){return window.IB_MonetizeCore?IB_MonetizeCore.formatRupiah(n):"Rp"+n}
   function today(){return new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Jakarta"}).format(new Date())}
   function addDays(iso,n){var d=new Date(iso+"T00:00:00Z");d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)}

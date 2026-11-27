@@ -60,21 +60,21 @@ function done(r,ok){if(r.error)return msg(friendlyErr(r.error),"err");msg(ok,"ok
 
 window.ADM_MOD={view:view,ensure:function(cb){S.cb=cb;if(!S.loaded&&!S.busy&&!S.fail)load()},reset:function(){S.loaded=false;S.fail=""}};
 
-document.addEventListener("click",function(ev){var b=ev.target.closest("button");if(!b||!$("stBody").contains(b))return;
+document.addEventListener("click",async function(ev){var b=ev.target.closest("button");if(!b||!$("stBody").contains(b))return;
   if(b.id==="mdRetry"){S.fail="";again()}
   if(b.id==="mdAdd"){var h=($("mdHost").value||"").trim();if(!h)return msg("Isi nama situs dulu.","err");
     sb.rpc("admin_blocklist_set",{p_host:h,p_action:$("mdAct").value,p_reason:($("mdWhy").value||"").trim()||null}).then(function(r){done(r,"Disimpan. Proxy menerapkannya dalam sekitar semenit.")})}
-  if(b.dataset.mdrm){if(!confirm("Hapus "+b.dataset.mdrm+" dari daftar?"))return;
+  if(b.dataset.mdrm){if(!await askConfirm("Hapus "+b.dataset.mdrm+" dari daftar?"))return;
     sb.rpc("admin_blocklist_remove",{p_host:b.dataset.mdrm}).then(function(r){done(r,"Dihapus dari daftar.")})}
   if(b.dataset.mdblock||b.dataset.mdwarn){var host=b.dataset.mdblock||b.dataset.mdwarn,act=b.dataset.mdblock?"block":"warn";
     sb.rpc("admin_blocklist_set",{p_host:host,p_action:act,p_reason:"Dilaporkan pengguna: "+(RS[b.dataset.why]||b.dataset.why)}).then(function(r){
       if(r.error)return msg(friendlyErr(r.error),"err");
       return sb.rpc("admin_reports_resolve",{p_host:host}).then(function(r2){done(r2,host+(act==="block"?" diblokir.":" diberi peringatan."))})})}
   if(b.dataset.mddst)sb.rpc("admin_blocklist_set",{p_host:b.dataset.mddst,p_action:"block",p_reason:"Tujuan iklan pop-up"}).then(function(r){done(r,b.dataset.mddst+" diblokir.")});
-  if(b.dataset.mdok){if(!confirm("Izinkan pop-up untuk "+b.dataset.mdok+"? Pemblokir pop-up dimatikan untuk situs ini."))return;
+  if(b.dataset.mdok){if(!await askConfirm("Izinkan pop-up untuk "+b.dataset.mdok+"? Pemblokir pop-up dimatikan untuk situs ini."))return;
     sb.rpc("admin_blocklist_set",{p_host:b.dataset.mdok,p_action:"popup_ok",p_reason:null}).then(function(r){done(r,"Pop-up diizinkan untuk "+b.dataset.mdok+". Berlaku dalam sekitar semenit.")})}
   if(b.dataset.mdskip)sb.rpc("admin_reports_resolve",{p_host:b.dataset.mdskip}).then(function(r){done(r,"Laporan ditutup.")});
-  if(b.id==="mdPurge"){if(!confirm("Hapus semua laporan yang lebih tua dari 90 hari? Tindakan ini tidak bisa dibatalkan."))return;
+  if(b.id==="mdPurge"){if(!await askConfirm("Hapus semua laporan yang lebih tua dari 90 hari? Tindakan ini tidak bisa dibatalkan."))return;
     sb.rpc("admin_reports_purge",{p_days:90}).then(function(r){done(r,n(r.data)+" laporan dihapus.")})}
 });
 document.addEventListener("keydown",function(e){if(e.key==="Enter"&&(e.target.id==="mdHost"||e.target.id==="mdWhy")){e.preventDefault();var a=$("mdAdd");if(a)a.click()}});

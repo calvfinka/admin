@@ -8,7 +8,7 @@ var CN={};CATS.forEach(function(c){CN[c[0]]=c[1]});
 var MON=["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
 var checks={},chunks=[],priorPct=0,priorLen=0,curRes=null,tm=null,posts=[],editing=null,mode="text",slugDirty=false,loaded=false,cur=null,tags=[],tagsTouched=false,tagCol=true;
 function msg(t,k){var m=$("msg");if(!m)return;m.textContent=t||"";m.className="msg"+(k?" "+k:"");m.hidden=!t}
-function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#x27;"}[c]})}
+var esc=window.esc;
 function fd(s){if(!s)return"";var d=new Date(s);return isNaN(d)?"":d.getDate()+" "+MON[d.getMonth()]+" "+d.getFullYear()}
 function slugify(t){return t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,60).replace(/-+$/,"")}
 /* ---- mode Teks ---- */

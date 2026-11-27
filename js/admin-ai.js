@@ -179,7 +179,7 @@ function go(t){S.tab=t;
   else if(t==="status"&&!S.hloading)loadHealth();
   render()}
 
-box.addEventListener("click",function(e){
+box.addEventListener("click",async function(e){
   var b=e.target.closest("button");if(!b)return;
   if(b.dataset.t){go(b.dataset.t);return}
   if(b.dataset.d){S.days=+b.dataset.d;S.stats=null;loadStats();return}
@@ -193,7 +193,7 @@ box.addEventListener("click",function(e){
   if(b.dataset.sback){S.cur=null;S.chat=null;S.cfail="";render();return}
   if(b.dataset.older){loadChat(true);return}
   if(b.dataset.del){
-    if(!S.who||!window.confirm("Hapus SELURUH riwayat chat "+C.personName(S.who)+"? Tidak bisa dibatalkan."))return;
+    if(!S.who||!await askConfirm("Hapus SELURUH riwayat chat "+C.personName(S.who)+"? Tidak bisa dibatalkan."))return;
     b.disabled=true;
     rpc("admin_ai_person_delete",{p_user:S.who.user_id||null,p_device:S.who.user_id?null:S.who.device}).then(function(){S.who=null;S.cur=null;S.chat=null;S.sess=[];S.people=[];loadPeople();if(window.toast)toast("Riwayat dihapus.")})
       .catch(function(er){b.disabled=false;if(window.msg)msg(window.friendlyErr?friendlyErr(er):(er&&er.message)||"Gagal","err")});return}
@@ -204,7 +204,7 @@ box.addEventListener("click",function(e){
   if(b.dataset.retry){var k=b.dataset.retry;if(k==="stats")loadStats();else if(k==="review")loadReview();else if(k==="runs")loadRuns();else if(k==="people")loadPeople();else if(k==="chat")loadChat();else if(k==="sess")loadSessions();else loadHealth();return}
   if(b.dataset.act){
     var act=b.dataset.act,id=b.dataset.id;
-    if(act==="delete"&&!window.confirm(S.rk==="pending"?"Tolak dan hapus contoh ini?":"Hapus baris ini dari daftar?"))return;
+    if(act==="delete"&&!await askConfirm(S.rk==="pending"?"Tolak dan hapus contoh ini?":"Hapus baris ini dari daftar?"))return;
     b.disabled=true;
     rpc("admin_ai_review_set",{p_id:id,p_action:act}).then(function(){S.rows=S.rows.filter(function(r){return r.id!==id});S.total=Math.max(0,S.total-1);S.stats=null;S.runs=null;render();if(window.toast)toast("Tersimpan.")})
       .catch(function(er){b.disabled=false;if(window.msg)msg(window.friendlyErr?friendlyErr(er):(er&&er.message)||"Gagal","err")})}

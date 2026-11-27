@@ -152,7 +152,7 @@ function sync(){var p=+($("nPend2")||{}).textContent||0,f=+($("nFrep")||{}).text
 ["nPend2","nFrep"].forEach(function(id){var el=$(id);if(el&&window.MutationObserver)new MutationObserver(sync).observe(el,{childList:true,characterData:true,subtree:true})});
 sync();
 
-document.addEventListener("click",function(ev){var b=ev.target.closest("button");if(!b)return;
+document.addEventListener("click",async function(ev){var b=ev.target.closest("button");if(!b)return;
   if(b.dataset.v==="stats"&&!D&&!loading)load();
   if(b.closest("#stRange")&&b.dataset.d){days=+b.dataset.d;D=null;BD=null;if(window.ADM_MOD)ADM_MOD.reset();if(tab==="browser"){BFAIL=""}load()}
   if(b.closest("#stTabs")&&b.dataset.t){tab=b.dataset.t;if(tab==="mod"&&window.ADM_MOD){ADM_MOD.reset();return render()}if(tab==="browser"){BFAIL="";return render()}if(tab==="users"&&!UROWS.length&&D)loadUsers().then(render);else render()}
@@ -160,7 +160,7 @@ document.addEventListener("click",function(ev){var b=ev.target.closest("button")
   if(b.id==="bRetry"){BFAIL="";BD=null;render()}
   if(b.id==="bGo"){BHOST=($("bHost").value||"").trim().toLowerCase();BSRC=$("bSrc").value;loadBrowserFeed()}
   if(b.id==="bMore")loadBrowserFeed(true);
-  if(b.id==="bPurge"){if(!confirm("Hapus semua data lalu lintas browser yang lebih tua dari 90 hari? Tindakan ini tidak bisa dibatalkan."))return;
+  if(b.id==="bPurge"){if(!await askConfirm("Hapus semua data lalu lintas browser yang lebih tua dari 90 hari? Tindakan ini tidak bisa dibatalkan."))return;
     sb.rpc("admin_browser_purge",{p_days:90}).then(function(r){if(r.error)return msg(friendlyErr(r.error),"err");msg(n(r.data)+" baris dihapus.","ok");BD=null;render()})}
   if(b.id==="uGo"){UQ=($("uQ").value||"").trim();loadUsers()}
   if(b.id==="uMore")loadUsers(true);

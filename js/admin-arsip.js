@@ -135,9 +135,9 @@ async function loadList(){
 document.addEventListener("click",async function(ev){
   var b=ev.target.closest("button");if(!b)return;
   if(b.dataset.v==="arsip"&&!loaded)loadList();
-  if(b.dataset.ar==="del"){var k=b.dataset.k;if(!confirm('Hapus SEMUA arsip di koleksi "'+k+'" (tulisan + komentar)? Tidak bisa dibatalkan.'))return;
+  if(b.dataset.ar==="del"){var k=b.dataset.k;if(!await askConfirm('Hapus SEMUA arsip di koleksi "'+k+'" (tulisan + komentar)? Tidak bisa dibatalkan.'))return;
     var r=await sb.rpc("arsip_hapus_koleksi",{k:k});if(r.error)return msg(hint(r.error),"err");msg("Koleksi "+k+" dihapus.","ok");loadList()}
-  if(b.dataset.ar==="pub"){var k2=b.dataset.k;if(!confirm('Terbitkan semua draft di koleksi "'+k2+'"?'))return;
+  if(b.dataset.ar==="pub"){var k2=b.dataset.k;if(!await askConfirm('Terbitkan semua draft di koleksi "'+k2+'"?'))return;
     var r2=await sb.from("arsip_blog").update({status:"published"}).eq("koleksi",k2).eq("status","draft");if(r2.error)return msg(hint(r2.error),"err");msg("Semua draft diterbitkan.","ok");loadList()}});
 $("arGo").onclick=run;
 $("arStop").onclick=function(){cancel=true;$("arStop").disabled=true;setTimeout(function(){$("arStop").disabled=false},1500)};

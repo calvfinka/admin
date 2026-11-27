@@ -8,7 +8,7 @@ function words(s){var n=norm(s);return n?n.split(" "):[]}
 function shingles(w,n){var o={},c=0;for(var i=0;i+n<=w.length;i++){var k=w.slice(i,i+n).join(" ");if(!o[k]){o[k]=1;c++}}return{set:o,n:c}}
 function contain(a,b){if(!a.n)return 0;var s=0;for(var k in a.set)if(b.set[k])s++;return s/a.n}
 function shOf(p){var key=p.id+":"+(p.body||"").length;if(!cache[key])cache[key]=shingles(words(strip(p.body,p.is_html)),5);return cache[key]}
-function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#x27;"}[c]})}
+var esc=window.esc;
 /* Berapa persen isi yang masih berupa teks tempelan (kalimat tempelan yang sudah ditulis ulang tidak dihitung) */
 function pastePct(body,chunks){var len=body.length;if(!len||!chunks.length)return 0;var tot=0,seen={};
   chunks.forEach(function(c){c.split(/[\n.!?]+/).forEach(function(p){p=p.trim();if(p.length>=12&&!seen[p]&&body.indexOf(p)>=0){seen[p]=1;tot+=p.length+1}})});
