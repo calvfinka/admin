@@ -5,14 +5,21 @@ var v=function(k){return $("f_"+k).value.trim()};
 function card(){var t=v("title")||"Judul event",d=v("event_date"),dp=d?new Date(d+"T00:00:00"):null,M=["JAN","FEB","MAR","APR","MEI","JUN","JUL","AGU","SEP","OKT","NOV","DES"],u=v("poster_url");
   var ex=kind()==="konser"?v("genre"):kind()==="naikgunung"?[v("mountain"),v("altitude_mdpl")?v("altitude_mdpl")+" mdpl":""].filter(Boolean).join(" · "):"";
   $("pvCard").innerHTML='<div class="ev" style="cursor:default"><div class="poster" style="background:'+(u?"url('"+esc(u).replace(/'/g,"%27")+"') center/cover,":"")+'linear-gradient(160deg,#14532d,#ff5a1f)"><span class="tag">'+({konser:"Konser",naikgunung:"Naik Gunung",pameran:"Pameran",festival:"Festival",komedi:"Komedi",seminar:"Seminar",meetup:"Meetup",lainnya:"Lainnya"}[kind()]||"Event")+'</span>'+(dp?'<div class="dt">'+("0"+dp.getDate()).slice(-2)+'<small>'+M[dp.getMonth()]+'</small></div>':'')+'</div><div class="eb"><h3>'+esc(t)+'</h3><div class="meta">📍 '+esc(v("venue")||"Lokasi belum diisi")+'</div>'+(ex?'<div class="meta">'+esc(ex)+'</div>':'')+'<div class="price">'+esc(v("price_label")||"Info menyusul")+'</div></div></div>'}
-function check(){var C=[["Judul",v("title")],["Kota",v("city_id")],["Tanggal mulai",v("event_date")],["Poster",v("poster_url")],["Lokasi / basecamp",v("venue")],["Penyelenggara",v("organizer")],["Harga",v("price_label")],["Deskripsi (min. 50 huruf)",v("description").length>=50],["Link tiket / daftar",v("ticket_url")],["Sumber IG (kredit penyelenggara)",v("source_ig")]],
-   k=kind()==="konser"?["Genre",v("genre")]:kind()==="naikgunung"?["Nama gunung",v("mountain")]:null;if(k)C.splice(4,0,k);
-  var ok=C.filter(function(c){return c[1]}).length;$("pvPct").textContent="("+Math.round(ok/C.length*100)+"%)";
-  $("ck").innerHTML=C.map(function(c){return'<li class="'+(c[1]?"ok":"no")+'">'+(c[1]?"✓ ":"○ ")+c[0]+'</li>'}).join("");$("ccDesc").textContent=v("description").length}
+var prevOk={},wasReady=false,CK='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+function head(){var h=$("ckHead");if(h)return h;h=document.createElement("div");h.id="ckHead";h.className="ckh";
+  h.innerHTML='<svg class="ckr" viewBox="0 0 36 36" aria-hidden="true"><circle class="t" cx="18" cy="18" r="15.9155"/><circle class="p" cx="18" cy="18" r="15.9155" stroke-dasharray="0 100"/></svg><div><b id="ckReq"></b><small id="ckSub"></small><span class="ckrdy" id="ckRdy">Siap terbit</span></div>';
+  $("ck").parentNode.insertBefore(h,$("ck"));return h}
+function check(){var o=snap();o.end_date=v("end_date");var r=IBC.score(o,kind(),window.EXP&&EXP.get?EXP.get().length:0),h=head();
+  $("pvPct").textContent="("+r.pct+"%)";h.querySelector(".p").setAttribute("stroke-dasharray",r.pct+" 100");
+  $("ckReq").textContent=r.pct+"% lengkap";$("ckSub").textContent="Wajib terisi "+r.reqDone+"/"+r.reqTotal;
+  h.classList.toggle("rdy",r.ready);h.classList.toggle("pop",r.ready&&!wasReady);wasReady=r.ready;
+  var cur={},li=function(c){cur[c.k]=c.ok;return'<li class="i '+(c.ok?"ok":"no")+(c.req?" rq":"")+(c.ok&&prevOk[c.k]===false?" new":"")+'"><span class="cm">'+CK+'</span>'+c.l+'</li>'};
+  $("ck").innerHTML='<li class="hd">Wajib</li>'+r.items.filter(function(c){return c.req}).map(li).join("")+'<li class="hd">Opsional</li>'+r.items.filter(function(c){return !c.req}).map(li).join("");
+  prevOk=cur;$("ccDesc").textContent=v("description").length}
 function snap(){var o={kind:kind()};F.forEach(function(k){o[k]=v(k)});return o}
 function refresh(){card();check()}
 function save(){var o=snap();if(!o.title&&!o.description)return;try{localStorage.setItem(SK,JSON.stringify(o))}catch(e){}}
-$("fEv").addEventListener("input",function(){refresh();save()});$("fEv").addEventListener("change",function(){refresh();save()});
+$("fEv").addEventListener("click",function(){setTimeout(refresh,60)});$("fEv").addEventListener("input",function(){refresh();save()});$("fEv").addEventListener("change",function(){refresh();save()});
 /* Pulihkan isian yang belum tersimpan (hanya untuk postingan baru) */
 document.addEventListener("click",function(ev){var b=ev.target.closest("button");if(!b||!(b.dataset.new||b.dataset.v==="form"||b.dataset.kind))return;
   setTimeout(function(){var s=null;try{s=JSON.parse(localStorage.getItem(SK))}catch(e){}$("rest").hidden=!(s&&!v("title")&&!b.dataset.kind);refresh()},0)});

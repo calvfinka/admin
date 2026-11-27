@@ -1,0 +1,24 @@
+/* Tahap 2 - checklist kelengkapan: progress ring, centang stroke, indikator daftar. Animasi hanya transform/opacity. */
+.ckh{display:flex;align-items:center;gap:12px;margin:0 0 10px}
+.ckr{flex:none;width:52px;height:52px;transform:rotate(-90deg)}
+.ckr circle{fill:none;stroke-width:3.4}
+.ckr .t{stroke:var(--line)}.ckr .p{stroke:var(--brand);stroke-linecap:round}
+.ckh.rdy .ckr .p{stroke:var(--ok)}
+.ckh b{display:block;font-size:14px}.ckh small{color:var(--mute);font-size:12px}
+.ckrdy{display:inline-block;margin-top:2px;padding:2px 10px;border-radius:999px;background:var(--ok);color:var(--brand-ink);font:700 12px var(--f);opacity:0;transform:scale(.8);transition:opacity .2s,transform .2s}
+.ckh.rdy .ckrdy{opacity:1;transform:none}
+.ckh.pop .ckrdy{animation:ckpop .35s}
+.ck li.hd{padding:8px 0 2px;font:700 11px var(--f);letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+.ck li.i{display:flex;align-items:center;gap:8px;min-height:28px}
+.ck .cm{flex:none;width:18px;height:18px;border-radius:50%;border:1.8px solid var(--faint);display:grid;place-items:center}
+.ck .cm svg{width:12px;height:12px;fill:none;stroke:var(--brand-ink);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.ck li.ok .cm{background:var(--ok);border-color:var(--ok)}.ck li.ok .cm svg{opacity:1}
+.ck li.new .cm{animation:ckpop .3s}
+.ck li.i.no.rq .cm{border-color:var(--accent)}
+.ck li.i.ok{color:var(--ok);font-weight:500}
+@keyframes ckpop{0%{transform:scale(.6);opacity:.4}60%{transform:scale(1.2);opacity:1}100%{transform:none}}
+.it .cmp{display:flex;align-items:center;gap:8px}
+.cbar{display:inline-block;flex:none;width:64px;height:6px;border-radius:99px;background:var(--line);overflow:hidden;position:relative}
+.cbar>b{position:absolute;inset:0;transform-origin:left;background:var(--brand)}
+.cbar.full>b{background:var(--ok)}
+@media (prefers-reduced-motion:reduce){.ckrdy{transition:none}.ckh.pop .ckrdy,.ck li.new .cm{animation:none}}
