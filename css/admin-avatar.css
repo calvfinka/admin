@@ -1,0 +1,19 @@
+/* Tahap 4 - foto profil di header, menu, dan dialog atur posisi. */
+.av-btn{flex:none;position:relative;width:44px;height:44px;padding:4px;border:0;background:transparent;cursor:pointer}
+.av-btn span{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;overflow:hidden;background:var(--brand);color:var(--brand-ink);font:700 15px var(--f)}
+.av-btn img{width:100%;height:100%;object-fit:cover}
+.av-menu{position:fixed;z-index:60;display:grid;min-width:180px;padding:6px;border:1px solid var(--line);border-radius:12px;background:var(--bg);box-shadow:0 12px 32px rgba(0,0,0,.28)}
+.av-menu[hidden],.av-btn[hidden]{display:none}
+.av-menu button{min-height:44px;padding:0 12px;border:0;border-radius:8px;background:transparent;color:var(--ink);font:600 14px var(--f);text-align:left;cursor:pointer}
+.av-menu button:hover{background:var(--hover)}
+.av-dlg[open]{display:grid;gap:12px;justify-items:center;width:min(340px,calc(100% - 24px));padding:16px}
+.av-dlg h3{margin:0;font-size:17px}
+.av-stage{position:relative;width:100%;max-width:272px;aspect-ratio:1;overflow:hidden;border-radius:12px;touch-action:none;cursor:grab}
+.av-stage canvas{display:block;width:100%;height:100%}
+.av-stage::after{content:"";position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 200px rgba(0,0,0,.5);outline:2px solid #fff;outline-offset:-2px;pointer-events:none}
+.av-dlg label{display:grid;width:100%;font:600 13px var(--f)}
+.av-dlg input[type=range]{width:100%;min-height:44px;accent-color:var(--brand)}
+.av-dlg p{margin:0;text-align:center;color:var(--mute);font-size:13px}
+.av-dlg .row{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
+.av-dlg .row .btn{min-height:44px;justify-content:center}
+@media (max-width:359px){.adm-top-in .logo .badge{display:none}}
