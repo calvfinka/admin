@@ -1,3 +1,5 @@
+> **USANG.** Pencatat chat sekarang ada di repo Dea (`worker/chatlog.js`, dipasang oleh `apply-chatlog.mjs`). Jangan tempel patch di bawah bersamaan dengan itu, nanti chat tercatat dua kali.
+
 # PATCH worker dme-ai: catat percakapan untuk tab Percakapan
 
 worker.js tidak ikut terunggah, jadi ini tempelan, bukan timpaan. Sistem lama menang kalau ada konflik.

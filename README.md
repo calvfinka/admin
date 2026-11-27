@@ -41,9 +41,10 @@ Menu **Iklan & Lencana** (izin `sponsor.view` melihat, `sponsor.manage` mengubah
 - `js/ads-core.js` harus identik dengan repo situs. Uji: `node tests/ads.test.js` (salin ulang `tests/schema_iklan.sql` bila SQL berubah) dan `node tests/ads-browser.js`.
 
 ## AI (Dea) > Percakapan (isi chat per orang)
-Tab **Percakapan** (khusus Pemilik): daftar orang (foto, nama, kota, jumlah chat/pesan), cari nama atau kota, buka riwayat chat per orang, dan tombol hapus riwayat satu orang. Tamu yang belum login tampil sebagai "Tamu" per perangkat.
-- Jalankan `supabase/admin_ai_chat.sql` (setelah `schema_rbac.sql` dan `admin_ai.sql`). Pasang Worker lewat `PATCH-worker-chat-log.md`. Sebelum itu, tab menampilkan petunjuk pemasangan.
-- Setiap membuka daftar atau riwayat tercatat di `admin_audit` (`ai.people.list`, `ai.chat.view`, `ai.chat.delete`) dan log itu tidak bisa diubah.
+Tab **Percakapan** (khusus Pemilik) mengikuti susunan web Dea: daftar orang (foto, nama, kota, jumlah chat/pesan, cari nama atau kota) → profil satu orang dengan daftar obrolan seperti bilah samping Dea (judul = pesan pertama, suasana Ceria/Galak/Manja, mode, jumlah pesan, "3 jam lalu", filter Ngobrol/Gunung/Konser/Trip) → isi satu obrolan. Ada tombol hapus riwayat satu orang. Tamu yang belum login tampil sebagai "Tamu" per perangkat.
+- Jalankan `supabase/admin_ai_chat.sql` (setelah `schema_rbac.sql` dan `admin_ai.sql`). Pencatat chat sudah ada di repo Dea (`worker/chatlog.js`); `PATCH-worker-chat-log.md` di sini cara lama, jangan dipasang bersamaan. Sebelum itu, tab menampilkan petunjuk pemasangan.
+- Setiap membuka daftar atau riwayat tercatat di `admin_audit` (`ai.people.list`, `ai.sessions.list`, `ai.chat.view`, `ai.chat.delete`) dan log itu tidak bisa diubah.
 - Masa simpan 90 hari (`ai_chat_purge`, jadwalkan lewat pg_cron; baris perintahnya ada di akhir SQL).
 - Sebelum dipakai: perbarui halaman Privasi dan tampilkan pemberitahuan persetujuan di ai.gowithdme.com (permintaan hapus data lewat `personal@gowithdme.com` bisa dilayani dengan tombol hapus).
+- Menjalankan ulang `admin_ai_chat.sql` aman: menambah kolom `persona`, fungsi `admin_ai_sessions`, dan mengganti `admin_ai_person` (kini punya `p_session`).
 - Berkas: `js/admin-ai.js` (tab), `js/ai-core.js` (label murni), `tests/ai-core.test.js`.

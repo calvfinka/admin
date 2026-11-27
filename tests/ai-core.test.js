@@ -68,4 +68,14 @@ t("SQL percakapan: tiap fungsi admin khusus pemilik, tercatat di audit, tabel te
   assert(/alter table ai_chat_messages enable row level security/.test(sql));
   assert(/revoke all on ai_chat_sessions, ai_chat_messages from anon, authenticated/.test(sql));
   assert(!/create policy/i.test(sql),"jangan beri policy ke tabel chat")});
+t("riwayat per obrolan: judul, label, 'x jam lalu'",()=>{
+  assert.strictEqual(C.sessionTitle({title:"  dea,  apa kabs "}),"dea, apa kabs");assert.strictEqual(C.sessionTitle({title:null}),"Obrolan tanpa judul");assert.strictEqual(C.sessionTitle(null),"Obrolan tanpa judul");
+  assert.strictEqual(C.sessionMeta({persona:"manja",mode:"ngobrol",messages:12}),"Manja · Ngobrol · 12 pesan");
+  assert.strictEqual(C.sessionMeta({mode:null,messages:2}),"2 pesan");assert.strictEqual(C.sessionMeta({persona:"aneh",mode:"gunung",messages:0}),"Gunung · 0 pesan");
+  const now=Date.parse("2026-11-27T12:00:00Z");
+  assert.strictEqual(C.ago("2026-11-27T11:59:30Z",now),"baru saja");assert.strictEqual(C.ago("2026-11-27T11:30:00Z",now),"30 mnt lalu");
+  assert.strictEqual(C.ago("2026-11-27T09:00:00Z",now),"3 jam lalu");assert.strictEqual(C.ago("2026-11-24T12:00:00Z",now),"3 hari lalu");
+  assert.strictEqual(C.ago("2026-08-27T12:00:00Z",now),"3 bln lalu");assert.strictEqual(C.ago("bukan tanggal",now),"—");
+  assert.ok(C.isMissingChat("Could not find the function public.admin_ai_sessions(p_user) in the schema cache"))});
+
 console.log("\n"+n+" uji lulus"+(process.exitCode?" (ADA YANG GAGAL)":""));

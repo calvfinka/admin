@@ -67,8 +67,17 @@
   function personInitial(p){p=p||{};var n=String(p.name||"").trim();return n?n.charAt(0).toUpperCase():(p.user_id?"?":"T")}
   function personKey(p){p=p||{};return p.user_id?String(p.user_id):(p.device?"d:"+p.device:"")}
   function placeLabel(p){p=p||{};var a=[p.city,p.region].filter(Boolean);return a.length?a.join(", "):"Lokasi tidak diketahui"}
-  function isMissingChat(msg){return /admin_ai_people|admin_ai_person|ai_chat_|schema cache|does not exist|Could not find/i.test(String(msg||""))}
+  function isMissingChat(msg){return /admin_ai_people|admin_ai_person|admin_ai_sessions|ai_chat_|schema cache|does not exist|Could not find/i.test(String(msg||""))}
 
-  return{personName:personName,personInitial:personInitial,personKey:personKey,placeLabel:placeLabel,isMissingChat:isMissingChat,TOPIC:TOPIC,DEVICE:DEVICE,MODE:MODE,ERR:ERR,REASON:REASON,HEALTH:HEALTH,label:label,pct:pct,ms:ms,tok:tok,rp:rp,cost:cost,
+  /* Riwayat per obrolan (meniru bilah samping ai.gowithdme.com): judul, suasana Dea, "3 jam lalu". */
+  var PERSONA={ceria:"Ceria",galak:"Galak",manja:"Manja"};
+  function sessionTitle(s){var t=String((s&&s.title)||"").replace(/\s+/g," ").trim();return t||"Obrolan tanpa judul"}
+  function ago(ts,now){var t=new Date(ts).getTime(),n=now==null?Date.now():+now;if(!isFinite(t))return"—";
+    var d=Math.max(0,Math.round((n-t)/1000));
+    if(d<60)return"baru saja";if(d<3600)return Math.floor(d/60)+" mnt lalu";if(d<86400)return Math.floor(d/3600)+" jam lalu";
+    if(d<2592000)return Math.floor(d/86400)+" hari lalu";return Math.floor(d/2592000)+" bln lalu"}
+  function sessionMeta(s){s=s||{};return[PERSONA[s.persona],s.mode?label(MODE,s.mode):null,(+s.messages||0)+" pesan"].filter(Boolean).join(" · ")}
+
+  return{PERSONA:PERSONA,sessionTitle:sessionTitle,ago:ago,sessionMeta:sessionMeta,personName:personName,personInitial:personInitial,personKey:personKey,placeLabel:placeLabel,isMissingChat:isMissingChat,TOPIC:TOPIC,DEVICE:DEVICE,MODE:MODE,ERR:ERR,REASON:REASON,HEALTH:HEALTH,label:label,pct:pct,ms:ms,tok:tok,rp:rp,cost:cost,
     peakHours:peakHours,weekly:weekly,shares:shares,ratingSummary:ratingSummary,errPct:errPct,healthRows:healthRows,isMissing:isMissing,isDenied:isDenied};
 });

@@ -11,7 +11,8 @@ var NF=new Intl.NumberFormat("id-ID"),MON=["Jan","Feb","Mar","Apr","Mei","Jun","
 var WORKER=((window.IB_CONFIG&&window.IB_CONFIG.AI_WORKER_URL)||"https://dme-ai.calvfinka.workers.dev").replace(/\/+$/,"");
 var S={tab:"ringkas",days:30,stats:null,loading:false,fail:"",rk:"pending",rows:[],total:0,roff:0,rloading:false,rfail:"",open:{},runs:null,rufail:"",health:null,hloading:false,hfail:"",
   price:{i:0,o:0},
-  pq:"",people:[],ptotal:0,poff:0,pload:false,pfail:"",who:null,chat:null,cload:false,cfail:""};
+  pq:"",people:[],ptotal:0,poff:0,pload:false,pfail:"",who:null,chat:null,cload:false,cfail:"",
+  sess:[],smore:false,sload:false,sfail:"",sm:"",cur:null};
 try{var sp=JSON.parse(localStorage.getItem("gwm_ai_price")||"{}");S.price.i=Math.max(0,+sp.i||0);S.price.o=Math.max(0,+sp.o||0)}catch(e){}
 function n(x){return NF.format(+x||0)}
 function dm(s){var d=new Date(s+"T00:00:00");return d.getDate()+" "+MON[d.getMonth()]}
@@ -81,24 +82,39 @@ function peopleView(){
     return'<div class="us">'+avatar(p)+'<div class="ub"><b>'+esc(C.personName(p))+"</b>"+(p.user_id?"":' <span class="badge">Tamu</span>')+'<div class="meta">'+[C.placeLabel(p),n(p.sessions)+" chat",n(p.messages)+" pesan","terakhir "+dt(p.last_at)].map(esc).join(" · ")+
       '</div></div><button class="btn ghost sm" data-who="'+i+'" type="button">Buka</button></div>'}).join("")+"</div>":(S.pload?'<p class="meta">Memuat…</p>':'<p class="meta">Belum ada percakapan tercatat.</p>');
   return bar+note+list+(S.people.length<S.ptotal?'<div class="row"><button class="btn ghost" data-pmore="1" type="button">Muat lagi ('+n(S.ptotal-S.people.length)+" lagi)</button></div>":"")}
-function chatView(){
+/* Profil satu orang: ringkasan + daftar obrolan (seperti bilah samping Dea). Buka satu obrolan untuk membaca isinya. */
+var MODES=[["","Semua"],["ngobrol","Ngobrol"],["gunung","Gunung"],["konser","Konser"],["trip","Trip"]];
+function profileView(){
   var P=S.who,h='<div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:8px"><button class="btn ghost sm" data-back="1" type="button">← Semua orang</button><button class="btn ghost sm" data-del="1" type="button" style="color:var(--err)">Hapus riwayat orang ini</button></div>'+
-    '<div class="card sc"><div class="us" style="border-top:0">'+avatar(P)+'<div class="ub"><b>'+esc(C.personName(P))+"</b>"+(P.user_id?"":' <span class="badge">Tamu</span>')+'<div class="meta">'+[C.placeLabel(P),n(P.sessions)+" chat",n(P.messages)+" pesan"].map(esc).join(" · ")+"</div></div></div></div>";
+    '<div class="card sc"><div class="us" style="border-top:0">'+avatar(P)+'<div class="ub"><b>'+esc(C.personName(P))+"</b>"+(P.user_id?"":' <span class="badge">Tamu</span>')+'<div class="meta">'+[C.placeLabel(P),n(P.sessions)+" chat",n(P.messages)+" pesan","terakhir "+dt(P.last_at)].map(esc).join(" · ")+"</div></div></div></div>"+
+    '<div class="seg" id="aiSm">'+MODES.map(function(m){return'<button class="tab'+(m[0]===S.sm?" on":"")+'" data-sm="'+m[0]+'" type="button">'+m[1]+"</button>"}).join("")+"</div>";
+  if(S.sfail)return h+chatFail(S.sfail,"sess");
+  if(!S.sess.length)return h+(S.sload?'<p class="meta">Memuat…</p>':'<p class="meta">Belum ada obrolan'+(S.sm?" di mode ini":"")+".</p>");
+  return h+'<div class="card sc">'+S.sess.map(function(x,i){
+    return'<div class="us"><div class="ub"><b>'+esc(C.sessionTitle(x))+'</b><div class="meta">'+[C.sessionMeta(x),C.ago(x.last_at),x.city].filter(Boolean).map(esc).join(" · ")+'</div></div><button class="btn ghost sm" data-open="'+i+'" type="button">Buka</button></div>'}).join("")+"</div>"+
+    (S.smore?'<div class="row"><button class="btn ghost" data-smore="1" type="button">Muat obrolan lebih lama</button></div>':"")}
+/* Isi satu obrolan. */
+function threadView(){
+  var P=S.who,X=S.cur,h='<div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:8px"><button class="btn ghost sm" data-sback="1" type="button">← Riwayat '+esc(C.personName(P))+"</button></div>"+
+    '<div class="card sc"><b>'+esc(C.sessionTitle(X))+'</b><div class="meta">'+[C.sessionMeta(X),"mulai "+dt(X.started_at),X.city].filter(Boolean).map(esc).join(" · ")+"</div></div>";
   if(S.cfail)return h+chatFail(S.cfail,"chat");
   if(!S.chat)return h+'<p class="meta">Memuat…</p>';
   var C0=S.chat,sid=null,out="";
   if(C0.more)out+='<div class="row"><button class="btn ghost sm" data-older="1" type="button">Muat pesan lebih lama</button></div>';
   (C0.messages||[]).forEach(function(m){
-    if(m.session_id!==sid){sid=m.session_id;out+='<p class="meta" style="margin-top:12px">— '+dt(m.created_at)+(m.mode?" · "+esc(C.label(C.MODE,m.mode)):"")+(m.city?" · "+esc(m.city):"")+" —</p>"}
     var me=m.role==="user";
-    out+='<div style="display:flex;justify-content:'+(me?"flex-end":"flex-start")+';margin:4px 0"><div style="max-width:85%;padding:8px 12px;border-radius:14px;white-space:pre-wrap;overflow-wrap:anywhere;background:'+(me?"var(--ember)":"var(--s2)")+";color:"+(me?"#12302a":"inherit")+'"><small class="meta" style="display:block">'+(me?esc(C.personName(P)):"Dea")+" · "+dt(m.created_at)+"</small>"+esc(m.content)+"</div></div>"});
+    out+='<div style="display:flex;justify-content:'+(me?"flex-end":"flex-start")+';margin:4px 0"><div style="max-width:85%;padding:8px 12px;border-radius:14px;white-space:pre-wrap;overflow-wrap:anywhere;background:'+(me?"var(--ember)":"var(--s2)")+";color:"+(me?"#12302a":"inherit")+'"><small class="meta" style="display:block">'+(me?esc(C.personName(P)):"Dea"+(m.persona&&C.PERSONA[m.persona]?" · "+esc(C.PERSONA[m.persona]):""))+" · "+dt(m.created_at)+"</small>"+esc(m.content)+"</div></div>"});
   return h+(out||'<p class="meta">Belum ada pesan.</p>')}
-function orang(){return S.who?chatView():peopleView()}
+
+function orang(){return S.who?(S.cur?threadView():profileView()):peopleView()}
 function loadPeople(more){if(S.pload)return;S.pload=true;S.pfail="";if(!more){S.people=[];S.ptotal=0;S.poff=0}render();
   return rpc("admin_ai_people",{p_q:S.pq||null,p_limit:20,p_offset:S.poff}).then(function(d){S.people=S.people.concat(d.rows||[]);S.ptotal=d.total||0;S.poff=S.people.length})
     .catch(function(e){S.pfail=e&&e.message||"Gagal"}).then(function(){S.pload=false;render()})}
-function loadChat(older){if(S.cload||!S.who)return;S.cload=true;S.cfail="";var before=older&&S.chat&&S.chat.messages.length?S.chat.messages[0].id:null;if(!older)S.chat=null;render();
-  return rpc("admin_ai_person",{p_user:S.who.user_id||null,p_device:S.who.user_id?null:S.who.device,p_limit:60,p_before:before}).then(function(d){
+function loadSessions(more){if(S.sload||!S.who)return;S.sload=true;S.sfail="";var before=more&&S.sess.length?S.sess[S.sess.length-1].last_at:null;if(!more){S.sess=[];S.smore=false}render();
+  return rpc("admin_ai_sessions",{p_user:S.who.user_id||null,p_device:S.who.user_id?null:S.who.device,p_mode:S.sm||null,p_limit:30,p_before:before}).then(function(d){S.sess=S.sess.concat(d.sessions||[]);S.smore=!!d.more})
+    .catch(function(e){S.sfail=e&&e.message||"Gagal"}).then(function(){S.sload=false;render()})}
+function loadChat(older){if(S.cload||!S.who||!S.cur)return;S.cload=true;S.cfail="";var before=older&&S.chat&&S.chat.messages.length?S.chat.messages[0].id:null;if(!older)S.chat=null;render();
+  return rpc("admin_ai_person",{p_user:S.who.user_id||null,p_device:S.who.user_id?null:S.who.device,p_limit:60,p_before:before,p_session:S.cur.id}).then(function(d){
     S.chat=older&&S.chat?{messages:(d.messages||[]).concat(S.chat.messages),more:!!d.more}:{messages:d.messages||[],more:!!d.more}})
     .catch(function(e){S.cfail=e&&e.message||"Gagal"}).then(function(){S.cload=false;render()})}
 
@@ -169,19 +185,23 @@ box.addEventListener("click",function(e){
   if(b.dataset.d){S.days=+b.dataset.d;S.stats=null;loadStats();return}
   if(b.dataset.pq){S.pq=($("aiQ")||{}).value||"";loadPeople();return}
   if(b.dataset.pmore){loadPeople(true);return}
-  if(b.dataset.who){S.who=S.people[+b.dataset.who]||null;S.chat=null;loadChat();return}
-  if(b.dataset.back){S.who=null;S.chat=null;S.cfail="";render();return}
+  if(b.dataset.who){S.who=S.people[+b.dataset.who]||null;S.cur=null;S.chat=null;S.sm="";S.sess=[];loadSessions();return}
+  if(b.dataset.back){S.who=null;S.cur=null;S.chat=null;S.sess=[];S.sfail="";S.cfail="";render();return}
+  if(b.dataset.sm!==undefined){S.sm=b.dataset.sm;loadSessions();return}
+  if(b.dataset.smore){loadSessions(true);return}
+  if(b.dataset.open){S.cur=S.sess[+b.dataset.open]||null;if(S.cur){S.chat=null;loadChat()}return}
+  if(b.dataset.sback){S.cur=null;S.chat=null;S.cfail="";render();return}
   if(b.dataset.older){loadChat(true);return}
   if(b.dataset.del){
     if(!S.who||!window.confirm("Hapus SELURUH riwayat chat "+C.personName(S.who)+"? Tidak bisa dibatalkan."))return;
     b.disabled=true;
-    rpc("admin_ai_person_delete",{p_user:S.who.user_id||null,p_device:S.who.user_id?null:S.who.device}).then(function(){S.who=null;S.chat=null;S.people=[];loadPeople();if(window.toast)toast("Riwayat dihapus.")})
+    rpc("admin_ai_person_delete",{p_user:S.who.user_id||null,p_device:S.who.user_id?null:S.who.device}).then(function(){S.who=null;S.cur=null;S.chat=null;S.sess=[];S.people=[];loadPeople();if(window.toast)toast("Riwayat dihapus.")})
       .catch(function(er){b.disabled=false;if(window.msg)msg(window.friendlyErr?friendlyErr(er):(er&&er.message)||"Gagal","err")});return}
   if(b.dataset.rk){S.rk=b.dataset.rk;loadReview();return}
   if(b.dataset.rkGo){S.rk=b.dataset.rkGo;S.tab="tinjau";loadReview();return}
   if(b.dataset.more){loadReview(true);return}
   if(b.dataset.exp){S.open[b.dataset.exp]=1;render();return}
-  if(b.dataset.retry){var k=b.dataset.retry;if(k==="stats")loadStats();else if(k==="review")loadReview();else if(k==="runs")loadRuns();else if(k==="people")loadPeople();else if(k==="chat")loadChat();else loadHealth();return}
+  if(b.dataset.retry){var k=b.dataset.retry;if(k==="stats")loadStats();else if(k==="review")loadReview();else if(k==="runs")loadRuns();else if(k==="people")loadPeople();else if(k==="chat")loadChat();else if(k==="sess")loadSessions();else loadHealth();return}
   if(b.dataset.act){
     var act=b.dataset.act,id=b.dataset.id;
     if(act==="delete"&&!window.confirm(S.rk==="pending"?"Tolak dan hapus contoh ini?":"Hapus baris ini dari daftar?"))return;
