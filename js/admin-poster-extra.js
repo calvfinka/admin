@@ -17,6 +17,20 @@ function draw(){
 }
 function shrink(f){return new Promise(function(res){if(f.size<250*1024||!/^image\/(jpeg|png|webp)$/.test(f.type))return res(f);var i=new Image();i.onload=function(){var s=Math.min(1,1280/Math.max(i.width,i.height)),c=document.createElement("canvas");c.width=i.width*s;c.height=i.height*s;c.getContext("2d").drawImage(i,0,0,c.width,c.height);c.toBlob(function(b){res(b&&b.size<f.size?new File([b],f.name.replace(/\.\w+$/,"")+".jpg",{type:"image/jpeg"}):f)},"image/jpeg",.85)};i.onerror=function(){res(f)};i.src=URL.createObjectURL(f)})}
 function say(t,k){if(window.msg)window.msg(t,k)}
+var SKX="ib_adm_extra";
+/* Simpan otomatis: event yang sedang diedit langsung ditulis ke database; postingan baru disimpan di browser sampai disimpan/terbit. */
+function persist(){
+  var id=window.IB_EDITING&&window.IB_EDITING();
+  if(id){
+    Promise.resolve(sb.from("events").update({extra_posters:list.slice()}).eq("id",id)).then(function(r){
+      if(r&&r.error)say("Poster tambahan gagal disimpan: "+r.error.message,"err");
+      else say("Poster tambahan tersimpan di database ("+list.length+").","ok")
+    },function(e){say("Poster tambahan gagal disimpan: "+((e&&e.message)||"koneksi bermasalah"),"err")});
+  }else{
+    try{localStorage.setItem(SKX,JSON.stringify(list))}catch(e){}
+    say("Poster tambahan diperbarui. Jangan lupa simpan.","ok");
+  }
+}
 function upOne(f){
   if(!/^image\//.test(f.type)){say("File harus berupa gambar.","err");return Promise.resolve()}
   return shrink(f).then(function(g){
@@ -37,15 +51,18 @@ function init(){
    +'<label class="f" style="margin-top:8px">atau tempel URL poster tambahan<input id="expUrl" type="url" placeholder="https://contoh.com/poster-hari-2.jpg"></label>';
   fs.appendChild(box);grid=$("expGrid");hint=$("expHint");
   $("expFile").onchange=function(){var fl=[].slice.call(this.files),el=this;say("Mengunggah "+fl.length+" poster…");
-    fl.reduce(function(p,f){return p.then(function(){return upOne(f)})},Promise.resolve()).then(function(){el.value="";draw();say("Poster tambahan diperbarui. Jangan lupa simpan.","ok")})};
+    fl.reduce(function(p,f){return p.then(function(){return upOne(f)})},Promise.resolve()).then(function(){el.value="";draw();persist()})};
   $("expUrl").addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();addUrl()}});
   $("expUrl").addEventListener("change",addUrl);
-  function addUrl(){var v=$("expUrl").value.trim();if(!v)return;if(!/^https:\/\//i.test(v)){say("URL poster harus diawali https://","err");return}list.push(v);$("expUrl").value="";draw()}
+  function addUrl(){var v=$("expUrl").value.trim();if(!v)return;if(!/^https:\/\//i.test(v)){say("URL poster harus diawali https://","err");return}list.push(v);$("expUrl").value="";draw();persist()}
   grid.addEventListener("click",function(ev){var b=ev.target.closest("button");if(!b)return;
     if(b.dataset.x!==undefined)list.splice(+b.dataset.x,1);
     if(b.dataset.m!==undefined){var i=+b.dataset.m,j=i+ +b.dataset.d,t=list[i];list[i]=list[j];list[j]=t}
-    draw()});
+    draw();persist()});
   ["f_event_date","f_end_date"].forEach(function(i){$(i).addEventListener("change",draw)});
+  var br=$("bRest");if(br)br.addEventListener("click",function(){try{var a=JSON.parse(localStorage.getItem(SKX));if(a&&a.length&&!list.length){list=a.filter(Boolean);draw()}}catch(e){}});
+  var bd=$("bDrop");if(bd)bd.addEventListener("click",function(){try{localStorage.removeItem(SKX)}catch(e){}});
+  $("fEv").addEventListener("submit",function(){setTimeout(function(){if($("v_form").hidden)try{localStorage.removeItem(SKX)}catch(e){}},1800)});
   draw();
 }
 window.EXP={get:function(){return list.slice()},set:function(a){list=(a||[]).filter(Boolean);if(grid)draw()}};

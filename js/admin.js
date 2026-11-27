@@ -60,6 +60,7 @@ function go(v){view=v;["dash","review","forum","words","sponsor","iklan","list",
 function setKind(k){kind=k;[].forEach.call(document.querySelectorAll(".kind button"),function(b){b.classList.toggle("on",b.dataset.kind===k)});
   [].forEach.call(document.querySelectorAll("[data-for]"),function(f){f.hidden=f.dataset.for==="konser"?(k==="naikgunung"||k==="pameran"):f.dataset.for!==k});
   $("lVenue").firstChild.textContent=k==="naikgunung"?"Basecamp / titik kumpul":"Lokasi / venue"}
+window.IB_EDITING=function(){return editing};
 function newPost(k){editing=null;editStatus="draft";$("fEv").reset();pv("");if(window.EXP)EXP.set([]);$("fTitle").textContent=k==="naikgunung"?"Pendakian baru":"Event baru: "+(CAT[k]||k);setKind(k);go("form")}
 function fill(e,asCopy){editing=asCopy?null:e.id;editStatus=asCopy?"draft":e.status;setKind(e.category);$("fTitle").textContent=asCopy?"Duplikat postingan":"Edit postingan";
   KEYS.forEach(function(k){$("f_"+k).value=e[k]==null?"":e[k]});if(asCopy)$("f_title").value=e.title+" (salinan)";pv(e.poster_url);if(window.EXP)EXP.set(e.extra_posters);go("form")}
