@@ -41,6 +41,23 @@
     </form>
     <p class="lg-note">Khusus pengelola GoWithDME</p>
   </div>
+  <div class="card narrow lg-card" id="pkCard" hidden>
+    <div class="lg-brand"><img src="assets/favicon.svg" alt="" width="44" height="44"><div><b>GoWithDME</b><span>Panel Admin</span></div></div>
+    <p class="pk-step">Langkah 2 dari 2</p>
+    <h3 id="pkTitle">Langkah Kedua: Verifikasi Passkey</h3>
+    <p id="pkText" class="meta"></p>
+    <p id="pkMsg" role="alert" aria-live="polite"></p>
+    <div class="pk-act">
+      <button class="btn pri lg-go" id="pkVerify" type="button">Gunakan Samsung Pass / Perangkat Ini</button>
+      <div class="pk-reg" id="pkRegBox" hidden>
+        <label class="f">Nama perangkat<input id="pkName" type="text" maxlength="60" autocomplete="off" value="Perangkat ini"></label>
+        <button class="btn ghost lg-out" id="pkReg" type="button">Daftarkan Passkey Baru</button>
+      </div>
+      <button class="btn ghost sm lg-out" id="pkSkip" type="button" hidden>Lewati (mode uji)</button>
+      <button class="btn ghost sm lg-out" id="pkOut" type="button">Keluar dari akun ini</button>
+    </div>
+    <p class="lg-note">Passkey memakai sidik jari, wajah, atau PIN perangkat.</p>
+  </div>
   <div class="card narrow" id="recCard" hidden><h3>Buat kata sandi baru</h3><p class="meta">Tautan reset diterima. Isi kata sandi baru untuk akun admin.</p>
     <form id="recForm" onsubmit="return false" style="display:grid;gap:10px;margin-top:10px">
       <label class="f">Kata sandi baru (min. 8 karakter)<input id="recPass" type="password" minlength="8" autocomplete="new-password"></label>
@@ -384,6 +401,6 @@
 <p>Geser foto untuk mengatur posisi.</p><label>Perbesar<input type="range" id="avZoom" min="1" max="4" step="0.01" value="1"></label>
 <div class="row"><button class="btn ghost" type="button" id="avCancel">Batal</button><button class="btn" type="button" id="avSave">Simpan foto</button></div></dialog>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script>window.supabase||document.write('<script src="https://unpkg.com/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"><\/script>')</script>
-<script src="js/config.js"></script><script src="js/supa.js"></script><script src="js/rbac-core.js"></script><script src="js/admin-access.js"></script><script src="js/word-filter.js"></script><script src="js/gunung-data.js"></script><script src="js/admin-complete.js"></script><script src="js/admin-motion.js"></script><script src="js/admin.js"></script><script src="js/admin-ux.js"></script><script src="js/admin-poster-extra.js"></script><script src="js/admin-kota.js"></script><script src="js/admin-forum.js"></script><script src="js/admin-orisinal.js"></script><script src="js/admin-blog.js"></script><script src="js/arsip-san.js"></script><script src="js/admin-arsip.js"></script><script src="js/admin-moderasi.js"></script><script src="js/admin-stats.js"></script><script src="js/admin-words.js"></script><script src="js/monetize-core.js"></script><script src="js/ads-core.js"></script><script src="js/admin-ads.js"></script><script src="js/admin-sponsor.js"></script><script src="js/ai-core.js"></script><script src="js/admin-ai.js"></script><script src="js/admin-login.js"></script><script src="js/admin-ui.js"></script><script src="js/admin-mobile.js"></script><script src="js/admin-quick.js"></script><script src="js/admin-avatar.js"></script>
+<script src="js/config.js"></script><script src="js/supa.js"></script><script src="js/rbac-core.js"></script><script src="js/admin-access.js"></script><script src="js/word-filter.js"></script><script src="js/gunung-data.js"></script><script src="js/admin-complete.js"></script><script src="js/admin-motion.js"></script><script src="js/admin.js"></script><script src="js/admin-ux.js"></script><script src="js/admin-poster-extra.js"></script><script src="js/admin-kota.js"></script><script src="js/admin-forum.js"></script><script src="js/admin-orisinal.js"></script><script src="js/admin-blog.js"></script><script src="js/arsip-san.js"></script><script src="js/admin-arsip.js"></script><script src="js/admin-moderasi.js"></script><script src="js/admin-stats.js"></script><script src="js/admin-words.js"></script><script src="js/monetize-core.js"></script><script src="js/ads-core.js"></script><script src="js/admin-ads.js"></script><script src="js/admin-sponsor.js"></script><script src="js/ai-core.js"></script><script src="js/admin-ai.js"></script><script src="https://cdn.jsdelivr.net/npm/@simplewebauthn/browser@13.1.0/dist/bundle/index.umd.min.js"></script><script>window.SimpleWebAuthnBrowser||document.write('<script src="https://unpkg.com/@simplewebauthn/browser@13.1.0/dist/bundle/index.umd.min.js"><\/script>')</script><script src="js/admin-passkey.js"></script><script src="js/admin-login.js"></script><script src="js/admin-ui.js"></script><script src="js/admin-mobile.js"></script><script src="js/admin-quick.js"></script><script src="js/admin-avatar.js"></script>
 <div id="toast" role="status" aria-live="polite"></div>
 </body></html>

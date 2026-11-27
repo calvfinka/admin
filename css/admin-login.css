@@ -1,17 +1,17 @@
 /* Halaman masuk admin: satu kartu di tengah, satu tombol Masuk.
    Aktif hanya saat kartu #lock tampil (body:has). Warna mengikuti token tema terang/gelap di style.css. */
-body:has(#lock:not([hidden])) .adm-top{display:none}
-body:has(#lock:not([hidden])){
+body:has(:is(#lock,#pkCard):not([hidden])) .adm-top{display:none}
+body:has(:is(#lock,#pkCard):not([hidden])){
   min-height:100vh;min-height:100dvh;
   background:
     radial-gradient(900px 520px at 85% -10%,color-mix(in srgb,var(--accent) 22%,transparent),transparent 70%),
     radial-gradient(800px 600px at -10% 110%,color-mix(in srgb,var(--brand) 55%,transparent),transparent 70%),
     linear-gradient(160deg,#0b4a3a 0%,#08342a 100%);
 }
-body:has(#lock:not([hidden]))::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+body:has(:is(#lock,#pkCard):not([hidden]))::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
   background:url(../assets/kontur.svg) center/cover no-repeat;opacity:.09}
-body:has(#lock:not([hidden])) .adm-frame{position:relative;z-index:1;min-height:100vh;min-height:100dvh;display:grid;place-items:center;padding:24px 16px}
-body:has(#lock:not([hidden])) .adm-frame>.wrap{width:100%;padding:0!important}
+body:has(:is(#lock,#pkCard):not([hidden])) .adm-frame{position:relative;z-index:1;min-height:100vh;min-height:100dvh;display:grid;place-items:center;padding:24px 16px}
+body:has(:is(#lock,#pkCard):not([hidden])) .adm-frame>.wrap{width:100%;padding:0!important}
 
 .lg-card[hidden]{display:none}
 .lg-card{width:100%;max-width:400px;margin:0 auto!important;padding:28px 26px 22px!important;border-radius:20px!important;
@@ -42,3 +42,20 @@ body:has(#lock:not([hidden])) .adm-frame>.wrap{width:100%;padding:0!important}
 .lg-note{margin:18px 0 0;text-align:center;font-size:12.5px;color:var(--faint)}
 @media (max-width:420px){.lg-card{padding:24px 20px 18px!important;border-radius:18px!important}.lg-card h3{font-size:22px}}
 @media (prefers-reduced-motion:reduce){.lg-card .f input{transition:none}}
+
+/* ===== Langkah kedua: verifikasi passkey ===== */
+/* Selama status passkey belum jelas, panel disembunyikan (pola sama dengan body.recovering). */
+body.pk-pending #panel,body.pk-pending #bnav,body.pk-pending .adm-top,body.pk-pending #msg,body.pk-pending #toast{display:none!important}
+body.recovering #pkCard{display:none!important}
+.pk-step{margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+#pkCard #pkText{margin:6px 0 0;font-size:14px;line-height:1.45}
+#pkMsg{margin:14px 0 0;font-size:13px;line-height:1.45}
+#pkMsg:empty{display:none}
+#pkMsg.bad{color:var(--err)}
+#pkMsg.ok{color:var(--ok,inherit)}
+.pk-act{display:grid;gap:10px;margin-top:18px}
+#pkCard .pk-act .lg-go{margin-top:0}
+#pkCard .pk-act .lg-out{margin-top:0}
+.pk-reg{display:grid;gap:10px;margin-top:6px;padding-top:14px;border-top:1px solid var(--line)}
+.pk-reg[hidden],#pkCard [hidden]{display:none}
+.pk-reg .f{margin-bottom:0}
