@@ -69,3 +69,13 @@ body.recovering #pkCard{display:none!important}
 .pk-link{background:none;border:0;padding:8px 4px;font:600 13.5px var(--f);color:var(--mute);cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-color:color-mix(in srgb,var(--mute) 40%,transparent)}
 .pk-link:hover{color:var(--ink)}
 .pk-reg .pk-link{color:var(--brand);text-decoration:none;font-size:14px}
+
+/* Tombol Keluar di panel */
+.adm-out-m{display:none}
+@media (max-width:899px),(min-width:900px) and (max-width:1023px) and (pointer:coarse){
+  .adm-top-in>.adm-out{display:none}
+  .adm-sfoot .adm-out-m{display:flex;align-items:center;width:100%;min-height:48px;padding:12px 14px;border:0;border-radius:12px;background:transparent;
+    color:#ffb4b4;font:550 15px/1.25 var(--f);text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .adm-sfoot .adm-out-m:hover{background:rgba(255,255,255,.08)}
+  .adm-sfoot .adm-out-m:focus-visible{outline:2px solid var(--sun);outline-offset:1px}
+}

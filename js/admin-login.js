@@ -126,5 +126,10 @@ if(P&&$("pkCard")){
   }
 }
 $("lgOut").addEventListener("click",function(){if(!window.sb)return;sb.auth.signOut().then(function(){location.reload()},function(){location.reload()})});
+/* Tombol Keluar di dalam panel (header untuk desktop, menu samping untuk HP) */
+function doOut(){if(!window.sb)return;try{if(P&&P.forget)P.forget()}catch(e){}
+  try{sessionStorage.clear()}catch(e){}
+  sb.auth.signOut().then(function(){location.reload()},function(){location.reload()})}
+["admOut","admOutM"].forEach(function(id){var b=$(id);if(b)b.addEventListener("click",doOut)});
 if(window.sb)sb.auth.getSession().then(function(r){if(r&&r.data&&r.data.session)$("lgOut").hidden=false},function(){});
 })();
