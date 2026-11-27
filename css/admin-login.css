@@ -45,17 +45,27 @@ body:has(:is(#lock,#pkCard):not([hidden])) .adm-frame>.wrap{width:100%;padding:0
 
 /* ===== Langkah kedua: verifikasi passkey ===== */
 /* Selama status passkey belum jelas, panel disembunyikan (pola sama dengan body.recovering). */
-body.pk-pending #panel,body.pk-pending #bnav,body.pk-pending .adm-top,body.pk-pending #msg,body.pk-pending #toast{display:none!important}
+body.pk-pending #panel,body.pk-pending #bnav,body.pk-pending .adm-top,body.pk-pending #msg,body.pk-pending #toast,body.pk-pending .fab{display:none!important}
+body:has(:is(#lock,#pkCard):not([hidden])) .fab{display:none!important}
 body.recovering #pkCard{display:none!important}
-.pk-step{margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
-#pkCard #pkText{margin:6px 0 0;font-size:14px;line-height:1.45}
-#pkMsg{margin:14px 0 0;font-size:13px;line-height:1.45}
+#pkCard [hidden]{display:none!important}
+.pk-head{text-align:center;margin-top:4px}
+.pk-ico{width:60px;height:60px;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--brand) 14%,transparent);color:var(--brand)}
+.pk-ico svg{width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.pk-step{margin:0 0 6px;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+#pkCard h3{font-size:21px}
+#pkCard #pkText{margin:8px 0 0;font-size:14px;line-height:1.5}
+#pkText:empty{display:none}
+#pkMsg{margin:14px 0 0;padding:10px 12px;border-radius:10px;font-size:13px;line-height:1.45;text-align:center;word-break:break-word}
 #pkMsg:empty{display:none}
-#pkMsg.bad{color:var(--err)}
-#pkMsg.ok{color:var(--ok,inherit)}
-.pk-act{display:grid;gap:10px;margin-top:18px}
-#pkCard .pk-act .lg-go{margin-top:0}
-#pkCard .pk-act .lg-out{margin-top:0}
-.pk-reg{display:grid;gap:10px;margin-top:6px;padding-top:14px;border-top:1px solid var(--line)}
-.pk-reg[hidden],#pkCard [hidden]{display:none}
-.pk-reg .f{margin-bottom:0}
+#pkMsg.bad{color:var(--err);background:color-mix(in srgb,var(--err) 10%,transparent)}
+#pkMsg.ok{color:var(--ok,inherit);background:color-mix(in srgb,var(--ok,#1a7f4b) 12%,transparent)}
+#pkCard .lg-go{margin-top:20px}
+.pk-reg{margin-top:14px;text-align:center}
+.pk-regform{display:grid;gap:10px;margin-top:12px;padding:14px;border:1px solid var(--line);border-radius:14px;text-align:left}
+.pk-regform .f{margin-bottom:0}
+.pk-regform .btn{width:100%;min-height:46px;border-radius:12px}
+.pk-links{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 18px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.pk-link{background:none;border:0;padding:8px 4px;font:600 13.5px var(--f);color:var(--mute);cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-color:color-mix(in srgb,var(--mute) 40%,transparent)}
+.pk-link:hover{color:var(--ink)}
+.pk-reg .pk-link{color:var(--brand);text-decoration:none;font-size:14px}

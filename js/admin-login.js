@@ -76,6 +76,7 @@ function pkSet(mode,err){
   var ok=P.deviceSupported(),lib=P.libReady(),v=$("pkVerify"),reg=$("pkRegBox");
   v.disabled=false;$("pkReg").disabled=false;
   v.hidden=false;reg.hidden=true;$("pkSkip").hidden=!P.canSkip();
+  $("pkRegToggle").hidden=false;$("pkRegForm").hidden=true;
   if(mode==="verify"){
     $("pkTitle").textContent="Langkah Kedua: Verifikasi Passkey";
     $("pkText").textContent="Akun ini dilindungi passkey. Gunakan sidik jari, wajah, atau PIN perangkat untuk melanjutkan.";
@@ -83,7 +84,7 @@ function pkSet(mode,err){
   }else if(mode==="register"){
     $("pkTitle").textContent="Langkah Kedua: Daftarkan Passkey";
     $("pkText").textContent="Akun Pemilik ini belum punya passkey. Daftarkan dulu (perlu izin sekali pakai dari database).";
-    v.hidden=true;reg.hidden=false
+    v.hidden=true;reg.hidden=false;$("pkRegToggle").hidden=true;$("pkRegForm").hidden=false
   }else{
     $("pkTitle").textContent="Verifikasi belum bisa dilakukan";
     $("pkText").textContent="";
@@ -109,6 +110,7 @@ if(P&&$("pkCard")){
     if(pkMode==="error"){return pkAct(this,"Memeriksa…",P.check,function(c){
       if(c.state==="ok")location.reload();else pkSet(c.state,c.error)})}
     pkAct(this,"Menunggu perangkat…",P.verify,function(_,b){b.disabled=true;pkSay("Berhasil. Membuka panel…","ok");location.reload()})});
+  $("pkRegToggle").addEventListener("click",function(){this.hidden=true;$("pkRegForm").hidden=false;try{$("pkName").focus()}catch(e){}});
   $("pkReg").addEventListener("click",function(){
     pkAct(this,"Mendaftarkan…",function(){return P.register($("pkName").value)},function(){
       pkSet("verify");pkSay("Passkey terdaftar. Sekarang verifikasi sekali untuk masuk.","ok")})});

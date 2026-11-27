@@ -43,20 +43,25 @@
   </div>
   <div class="card narrow lg-card" id="pkCard" hidden>
     <div class="lg-brand"><img src="assets/favicon.svg" alt="" width="44" height="44"><div><b>GoWithDME</b><span>Panel Admin</span></div></div>
-    <p class="pk-step">Langkah 2 dari 2</p>
-    <h3 id="pkTitle">Langkah Kedua: Verifikasi Passkey</h3>
-    <p id="pkText" class="meta"></p>
-    <p id="pkMsg" role="alert" aria-live="polite"></p>
-    <div class="pk-act">
-      <button class="btn pri lg-go" id="pkVerify" type="button">Gunakan Samsung Pass / Perangkat Ini</button>
-      <div class="pk-reg" id="pkRegBox" hidden>
-        <label class="f">Nama perangkat<input id="pkName" type="text" maxlength="60" autocomplete="off" value="Perangkat ini"></label>
-        <button class="btn ghost lg-out" id="pkReg" type="button">Daftarkan Passkey Baru</button>
-      </div>
-      <button class="btn ghost sm lg-out" id="pkSkip" type="button" hidden>Lewati (mode uji)</button>
-      <button class="btn ghost sm lg-out" id="pkOut" type="button">Keluar dari akun ini</button>
+    <div class="pk-head">
+      <div class="pk-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/><path d="M14 13.12c0 2.38 0 6.38-1 8.88"/><path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/><path d="M2 12a10 10 0 0 1 18-6"/><path d="M21.8 16c.2-2 .131-5.354 0-6"/><path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/><path d="M8.65 22c.21-.66.45-1.32.57-2"/><path d="M9 6.8a6 6 0 0 1 9 5.2v2"/></svg></div>
+      <p class="pk-step">Langkah 2 dari 2</p>
+      <h3 id="pkTitle">Langkah Kedua: Verifikasi Passkey</h3>
+      <p id="pkText" class="meta"></p>
     </div>
-    <p class="lg-note">Passkey memakai sidik jari, wajah, atau PIN perangkat.</p>
+    <p id="pkMsg" role="alert" aria-live="polite"></p>
+    <button class="btn pri lg-go" id="pkVerify" type="button">Gunakan Samsung Pass / Perangkat Ini</button>
+    <div class="pk-reg" id="pkRegBox" hidden>
+      <button class="pk-link" id="pkRegToggle" type="button">+ Daftarkan passkey baru</button>
+      <div class="pk-regform" id="pkRegForm" hidden>
+        <label class="f">Nama perangkat<input id="pkName" type="text" maxlength="60" autocomplete="off" value="Perangkat ini"></label>
+        <button class="btn ghost" id="pkReg" type="button">Daftarkan Passkey Baru</button>
+      </div>
+    </div>
+    <div class="pk-links">
+      <button class="pk-link" id="pkSkip" type="button" hidden>Lewati (mode uji)</button>
+      <button class="pk-link" id="pkOut" type="button">Keluar dari akun ini</button>
+    </div>
   </div>
   <div class="card narrow" id="recCard" hidden><h3>Buat kata sandi baru</h3><p class="meta">Tautan reset diterima. Isi kata sandi baru untuk akun admin.</p>
     <form id="recForm" onsubmit="return false" style="display:grid;gap:10px;margin-top:10px">
