@@ -12,6 +12,9 @@
      Ubah ke false SEBELUM 2FA dinyalakan di database. */
   var ALLOW_SKIP = true;
 
+  /* DEBUG: true = tampilkan pesan asli dari server di bawah pesan galat (untuk mencari masalah). Ubah ke false bila sudah beres. */
+  var DEBUG = true;
+
   var OK_KEY = "adm_pk_ok";     // sesi ini sudah lolos passkey (hanya cache tampilan, per tab)
   var SKIP_KEY = "adm_pk_skip"; // sesi ini memilih lewati (hanya saat ALLOW_SKIP)
 
@@ -55,6 +58,11 @@
 
   /* ---------- Pesan galat dari server -> kode + teks Indonesia ---------- */
   function fromServer(status, raw) {
+    var e = fromServer2(status, raw);
+    e.detail = status + ": " + String(raw || "(kosong)");
+    return e;
+  }
+  function fromServer2(status, raw) {
     var m = String(raw || "");
     if (status === 401 && /^(Token|Authorization)/i.test(m))
       return new PkError("session", "Sesi berakhir. Silakan masuk lagi.", status);
@@ -182,6 +190,9 @@
     remove: remove,
     skip: skip,
     forget: forget,
-    friendly: function (e) { return (e && e.message) || "Terjadi kesalahan. Coba lagi."; }
+    friendly: function (e) {
+      var t = (e && e.message) || "Terjadi kesalahan. Coba lagi.";
+      return DEBUG && e && e.detail ? t + " [" + e.detail + "]" : t;
+    }
   };
 })();
