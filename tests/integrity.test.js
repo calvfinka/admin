@@ -15,7 +15,7 @@ const admin = fs.existsSync(path.join(root, "js/admin.js")) ? read("js/admin.js"
 ok(/window\.admAsk\s*=/.test(admin), "js/admin.js mendefinisikan window.admAsk (dipakai modul lain)");
 ok(/VIEW_TITLES/.test(admin) && /function go\(/.test(admin), "js/admin.js memuat VIEW_TITLES dan go() (navigasi panel)");
 ok(!/deaSupabase|DEA_ENV|js\/env\.js/.test(admin), "js/admin.js bukan panel pelatihan Dea (tanpa deaSupabase/DEA_ENV)");
-ok(admin.split("\n").length > 300, "js/admin.js berukuran panel penuh (" + admin.split("\n").length + " baris)");
+ok(admin.length > 12000, "js/admin.js berukuran panel penuh (" + admin.length + " byte, " + admin.split("\n").length + " baris)");
 
 // id elemen yang diminta admin.js harus ada di index.html
 const ids = [...new Set([...admin.matchAll(/\$\("([A-Za-z][\w-]*)"\)/g)].map((m) => m[1]))];
