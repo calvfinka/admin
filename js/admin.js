@@ -92,7 +92,8 @@ function draw(){
   else if(srows===null&&$("flCount"))$("flCount").textContent="";
   $("items").innerHTML=l.length?l.map(item).join(""):'<div class="empty">'+(kel?"Semua event di filter ini sudah lengkap. Kerja bagus!":"Tidak ada postingan yang cocok. Ubah filter atau buat postingan baru.")+'</div>';
 }
-function load(){return sb.from("events").select("*,cities(name),event_submissions(user_id,reject_reason,profiles(nickname))").order("event_date",{ascending:false}).then(function(r){if(r.error)msg(friendlyErr(r.error),"err");rows=r.data||[];draw();dbSearch(true)})}
+function load(){return sb.from("events").select("*,cities(name),event_submissions(user_id,reject_reason,profiles(nickname))").order("event_date",{ascending:false}).then(function(r){if(r.error)msg(friendlyErr(r.error),"err");var first=!rows.length;rows=r.data||[];draw();if(first&&window.ADM_MOTION)ADM_MOTION.loaded();dbSearch(true)})}
+function done(t){if(window.ADM_MOTION&&$("toast"))ADM_MOTION.saved(t);else msg(t,"ok")}
 document.addEventListener("click",function(ev){var b=ev.target.closest("button");if(!b)return;
   if(b.dataset.v){if(b.dataset.v==="form")newPost(kind);else go(b.dataset.v)}
   if(b.dataset.new)newPost(b.dataset.new);
@@ -102,7 +103,7 @@ document.addEventListener("click",function(ev){var b=ev.target.closest("button")
   if(b.dataset.k!==undefined&&b.closest("#flKind")){fk=b.dataset.k;[].forEach.call(document.querySelectorAll("#flKind .tab"),function(t){t.classList.toggle("on",t===b)});draw()}
   if(b.dataset.a){var e=rows.filter(function(x){return x.id===b.dataset.id})[0];if(!e)return;
     if(b.dataset.a==="edit")fill(e);
-    if(b.dataset.a==="ok")sb.rpc("admin_review_event",{p_id:e.id,p_ok:true,p_reason:null}).then(function(r){msg(r.error?friendlyErr(r.error):"Disetujui dan tayang.",r.error?"err":"ok");load()});
+    if(b.dataset.a==="ok")sb.rpc("admin_review_event",{p_id:e.id,p_ok:true,p_reason:null}).then(function(r){if(r.error)msg(friendlyErr(r.error),"err");else done("Disetujui dan tayang.");load()});
     if(b.dataset.a==="no"){
       admAsk({title:"Tolak pengajuan event",text:'Berikan alasan penolakan untuk "'+e.title+'" agar pengaju dapat memperbaiki.',input:true,ph:"Tulis alasan penolakan (opsional)…",presets:["Poster kurang jelas / tidak sesuai","Tanggal atau lokasi belum lengkap","Kontak penyelenggara tidak valid","Konten tidak sesuai panduan GoWithDME"],ok:"Tolak Pengajuan"}).then(function(why){
         if(why===null)return;
@@ -110,7 +111,7 @@ document.addEventListener("click",function(ev){var b=ev.target.closest("button")
       });
     }
     if(b.dataset.a==="dup")fill(e,true);
-    if(b.dataset.a==="tog")sb.from("events").update({status:e.status==="published"?"draft":"published"}).eq("id",e.id).then(function(r){msg(r.error?friendlyErr(r.error):"Status diubah.",r.error?"err":"ok");load()});
+    if(b.dataset.a==="tog")sb.from("events").update({status:e.status==="published"?"draft":"published"}).eq("id",e.id).then(function(r){if(r.error)msg(friendlyErr(r.error),"err");else done("Status diubah.");load()});
     if(b.dataset.a==="del"){
       admAsk({title:"Hapus postingan",text:'Hapus permanen "'+e.title+'"?',ok:"Hapus"}).then(function(ok){
         if(!ok)return;
@@ -157,13 +158,13 @@ $("fEv").onsubmit=function(e){e.preventDefault();var d={};saveAs=(e.submitter&&e
   if(dup)return msg('Sudah ada postingan yang sama: "'+dup.title+'" ('+(ST[dup.status]||dup.status)+'). Edit yang itu, atau ubah judul/tanggal.',"err");
   var q;if(editing)q=sb.from("events").update(d).eq("id",editing);else{d.slug=slug(d.title+" "+(($("f_city_id").selectedOptions[0]||{}).text||""),d.event_date);q=sb.from("events").insert(d)}
   q.then(function(r){if(r.error)return msg(r.error.message.indexOf("duplicate")>-1?"Postingan yang sama (kota, tanggal, judul) sudah ada.":r.error.message,"err");
-    load().then(function(){go("list");msg(saveAs==="published"?"Tersimpan dan terbit.":"Tersimpan sebagai draft.","ok")})})};
+    load().then(function(){go("list");done(saveAs==="published"?"Tersimpan dan terbit.":"Tersimpan sebagai draft.")})})};
 (window.IB_ADMIN_P||getMe().then(function(m){return{m:m,a:m&&m.profile.role==="admin"?{active:true,owner:true,perms:[]}:null}})).then(function(x){
   var m=x.m,a=x.a;
   if(!m||!a){$("lock").hidden=false;$("lockT").textContent=m?(x.why==="kedaluwarsa"?"Akses admin akun ini sudah berakhir.":x.why==="nonaktif"?"Akses admin akun ini dinonaktifkan.":"Akun ini bukan admin."):"Silakan masuk dahulu.";if($("lgOut"))$("lgOut").hidden=!m;return}
   $("panel").hidden=false;$("bnav").hidden=false;if(window.IB_MountainBind)IB_MountainBind($("f_mountain"),$("f_altitude_mdpl"));$("who").textContent=m.profile.nickname||m.user.email;setKind("konser");
   loadCities($("f_city_id"),true);loadCities($("flCity"),true).then(function(){$("flCity").options[0].text="Semua kota"});
-  if(a.owner||!window.RBAC||RBAC.can(a,"events.view"))load();else{rows=[];draw()}
+  if(a.owner||!window.RBAC||RBAC.can(a,"events.view")){if(window.ADM_MOTION)ADM_MOTION.loading();load()}else{rows=[];draw()}
   /* Mulai dari tampilan pertama yang boleh dibuka (Beranda selalu boleh) */
   if(window.RBAC&&window.IB_ADMIN&&!RBAC.canView(window.IB_ADMIN,view))go("dash");
 });

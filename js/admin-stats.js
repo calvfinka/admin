@@ -137,7 +137,7 @@ function render(){var b=$("stBody");if(tab==="mod"){b.innerHTML=window.ADM_MOD?A
   b.innerHTML=tab==="visit"?visit():tab==="users"?users():content();
   [].forEach.call(document.querySelectorAll("#stTabs .tab"),function(x){x.classList.toggle("on",x.dataset.t===tab)});
   [].forEach.call(document.querySelectorAll("#stRange .tab"),function(x){x.classList.toggle("on",+x.dataset.d===days)})}
-function load(){if(loading)return;loading=true;$("stBody").innerHTML='<p class="meta">Memuat…</p>';
+function load(){if(loading)return;loading=true;$("stBody").innerHTML=window.SKEL||'<p class="meta">Memuat…</p>';
   return sb.rpc("admin_stats",{p_days:days}).then(function(r){loading=false;if(r.error)return fail(r.error);D=r.data;kpiDash();
     if(tab==="users"&&!UROWS.length)return loadUsers().then(render);render()})}
 

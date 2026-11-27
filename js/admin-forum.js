@@ -61,7 +61,7 @@ var GROUP_RE=/^https:\/\/(chat\.whatsapp\.com|whatsapp\.com\/channel|t\.me|disco
 var C={cities:[],stats:{},groups:[],wait:[],names:[]};
 function opt(v,l,sel){return'<option value="'+esc(v)+'"'+(sel?" selected":"")+'>'+esc(l)+'</option>'}
 function cfg(){
-  var box=$("fmList");box.innerHTML='<div class="meta">Memuat…</div>';
+  var box=$("fmList");box.innerHTML=window.SKEL||'<div class="meta">Memuat…</div>';
   Promise.all([sb.from("forum_cities").select("*").order("sort").order("name"),sb.from("forum_city_stats").select("city,posts,groups,waiting"),sb.from("forum_groups").select("*").order("created_at"),sb.rpc("admin_forum_waitlist"),sb.from("cities").select("name").order("name")]).then(function(x){
     var err=x[0].error||x[1].error||x[2].error||x[4].error;if(err){box.innerHTML="";msg(sqlHint(err),"err");return}
     C.cities=x[0].data||[];C.stats={};(x[1].data||[]).forEach(function(r){C.stats[r.city]=r});C.groups=x[2].data||[];
@@ -144,7 +144,7 @@ function doUnban(uid){
     return sb.rpc("admin_forum_unban",{p_user:uid}).then(function(r){if(r.error)return msg(sqlHint(r.error),"err");msg("Blokir dicabut.","ok");refresh()});
   })}
 function showBans(){
-  var box=$("fmList");box.innerHTML='<div class="meta">Memuat…</div>';
+  var box=$("fmList");box.innerHTML=window.SKEL||'<div class="meta">Memuat…</div>';
   var since=new Date(Date.now()-30*864e5).toISOString();
   Promise.all([sb.from("forum_bans").select("user_id,reason,until_at,auto,created_at,profiles(nickname)").order("created_at",{ascending:false}).limit(100),sb.from("forum_strikes").select("user_id").gte("created_at",since)]).then(function(x){
     var err=x[0].error||x[1].error;if(err){box.innerHTML="";msg(sqlHint(err),"err");return}
@@ -158,7 +158,7 @@ function showBans(){
 function show(){
   if(tab==="cfg")return cfg();
   if(tab==="ban")return showBans();
-  var box=$("fmList");box.innerHTML='<div class="meta">Memuat…</div>';
+  var box=$("fmList");box.innerHTML=window.SKEL||'<div class="meta">Memuat…</div>';
   fetchItems().then(function(L){return loadAuthors(L).then(function(){return L})}).then(function(L){
     var none={rep:"Tidak ada laporan yang menunggu.",new:"Belum ada kiriman atau balasan.",off:"Tidak ada yang disembunyikan atau dihapus."}[tab];
     box.innerHTML=L.length?L.map(card).join(""):'<div class="empty">'+none+'</div>'})}

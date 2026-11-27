@@ -88,7 +88,7 @@
   function load(force) {
     if (loading || (loaded && !force)) return;
     loading = true;
-    var list = $("adList"); if (list && !rows.length) list.innerHTML = '<div class="empty">Memuat…</div>';
+    var list = $("adList"); if (list && !rows.length) list.innerHTML = window.SKEL || '<div class="empty">Memuat…</div>';
     Promise.resolve(sb.rpc("admin_list_ads")).then(function (r) {
       loading = false;
       if (r.error) {

@@ -22,9 +22,9 @@ window.IB_ARRIVAL={hash:location.hash,search:location.search};
     if(t&&type==="ok")_msgT=setTimeout(function(){m.hidden=true;m.textContent="";m.className="msg"},4500);
   };
   var _toastT;
-  window.toast=function(m,ms){
+  window.toast=function(m,ms,ok){
     var t=$("toast");if(t===DUM)return;
-    t.textContent=m||"";t.classList.add("on");clearTimeout(_toastT);
+    t.textContent=m||"";t.classList.toggle("ok",!!ok);t.classList.add("on");clearTimeout(_toastT);
     var d=ms!=null?ms:Math.max(2400,Math.min(6000,(m||"").length*55));
     _toastT=setTimeout(function(){t.classList.remove("on")},d);
   };
