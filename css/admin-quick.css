@@ -1,0 +1,16 @@
+/* Tahap 1 - Akses cepat: kartu "Mulai cepat", "Lanjutkan draft", FAB. Hanya tampilan; tidak menyentuh data/RBAC. */
+.qs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 20px}
+.qs button{display:flex;align-items:center;gap:10px;min-height:56px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--bg);color:var(--ink);font:650 14px var(--f);text-align:left;cursor:pointer;touch-action:manipulation;transition:transform .15s,border-color .15s}
+.qs button:active{transform:scale(.97)}
+.qs .qa-ic{width:36px;height:36px;margin:0}
+.qs .qs-res{grid-column:1/-1;border-color:var(--brand);background:var(--sel)}
+.qs .qs-res small{display:block;color:var(--mute);font:500 12px var(--f);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.qs .qs-res span:last-child{min-width:0}
+.qs kbd{margin-left:auto;font:600 11px var(--mono);color:var(--mute);border:1px solid var(--line);border-radius:5px;padding:1px 5px}
+.fab{position:fixed;right:16px;bottom:calc(72px + env(safe-area-inset-bottom,0px));z-index:29;display:none;align-items:center;gap:8px;min-height:48px;min-width:48px;padding:0 18px 0 14px;border:0;border-radius:999px;background:var(--accent);color:var(--accent-ink);font:700 14px var(--f);box-shadow:0 8px 20px -8px rgba(0,0,0,.5);cursor:pointer;touch-action:manipulation;transition:transform .15s,opacity .15s}
+.fab svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+.fab:active{transform:scale(.94)}
+.fab[hidden]{display:none!important}
+@media (max-width:899px),(min-width:900px) and (max-width:1023px) and (pointer:coarse){.fab:not([hidden]){display:inline-flex}body.nav-open .fab{opacity:0;pointer-events:none}}
+@media (min-width:640px){.qs{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (prefers-reduced-motion:reduce){.qs button,.fab{transition:none}.qs button:active,.fab:active{transform:none}}
