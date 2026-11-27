@@ -17,7 +17,9 @@ window.IB_CONFIG = {
   FEATURED_LABEL_ID: "Disorot",
   FEATURED_LABEL_EN: "Featured",
   SPONSOR_LEADS_ENABLED: true,
+  ADS_ENABLED: true,                            // lencana iklan dari admin > Iklan & Lencana (false = matikan semua); sama dengan situs utama
   AFFILIATE_TICKET_BASE: "",
   AD_SLOT_HOME: "",
-  AD_SLOT_SIDE: ""
+  AD_SLOT_SIDE: "",
+  AI_WORKER_URL: "https://dme-ai.calvfinka.workers.dev"  // khusus admin: Worker Dea untuk tab AI > Status model (GET /health, terbuka untuk semua origin)
 };
