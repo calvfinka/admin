@@ -4,7 +4,7 @@ var KEYS=["title","city_id","event_date","end_date","price_label","venue","genre
 var CAT={konser:"Konser",naikgunung:"Naik Gunung",pameran:"Pameran",festival:"Festival",komedi:"Komedi",seminar:"Seminar",meetup:"Meetup",lainnya:"Lainnya"},DIF={pemula:"Pemula",menengah:"Menengah",sulit:"Sulit"};
 var MON=["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
 var ST={published:"Terbit",draft:"Draft",pending:"Menunggu",rejected:"Ditolak"};
-var rows=[],srows=null,searchSeq=0,searchT=0,editing=null,editStatus="draft",kind="konser",fk="",view="dash";
+var shown=[],stotal=null,rows=[],srows=null,searchSeq=0,searchT=0,editing=null,editStatus="draft",kind="konser",fk="",view="dash";
 var kel="",GL={poster:"Poster",lineup:"Line-up",harga:"Harga",tiket:"Link tiket"};
 /* kelengkapan data: field penting yang masih kosong. Line-up tidak berlaku untuk pendakian. "menyusul"/"info…" dianggap belum diisi. */
 function gaps(e){var g=[],lu=(e.lineup||"").trim(),pr=(e.price_label||"").trim();
@@ -90,6 +90,7 @@ function draw(){
   if(kel){l=l.filter(function(e){return upc(e)&&(kel==="any"?gaps(e).length>0:gaps(e).indexOf(kel)>-1)}).sort(function(a,b){return a.event_date<b.event_date?-1:a.event_date>b.event_date?1:0});
     if($("flCount"))$("flCount").textContent=l.length+" event mendatang perlu dilengkapi, terdekat dulu"}
   else if(srows===null&&$("flCount"))$("flCount").textContent="";
+  shown=l;
   $("items").innerHTML=l.length?l.map(item).join(""):'<div class="empty">'+(kel?"Semua event di filter ini sudah lengkap. Kerja bagus!":"Tidak ada postingan yang cocok. Ubah filter atau buat postingan baru.")+'</div>';
 }
 function load(){return sb.from("events").select("*,cities(name),event_submissions(user_id,reject_reason,profiles(nickname))").order("event_date",{ascending:false}).then(function(r){if(r.error)msg(friendlyErr(r.error),"err");var first=!rows.length;rows=r.data||[];draw();if(first&&window.ADM_MOTION)ADM_MOTION.loaded();dbSearch(true)})}
@@ -118,17 +119,35 @@ document.addEventListener("click",function(ev){var b=ev.target.closest("button")
         sb.from("events").delete().eq("id",e.id).then(function(r){msg(r.error?friendlyErr(r.error):"Dihapus.",r.error?"err":"ok");load()});
       });
     }}});
+/* Unduh CSV: isi daftar yang sedang tampil (ikut filter kategori/status/kota/tanggal/cari). Tanpa filter = semua postingan.
+   Kolom "kunci_duplikat" memakai aturan yang sama dengan pemeriksaan anti-duplikat saat simpan: kota | tanggal mulai | 10 huruf/angka pertama judul. */
+function nkey(t){return String(t||"").toLowerCase().replace(/[^a-z0-9]/g,"").slice(0,10)}
+function csvCell(v){if(v==null)return"";v=String(v).replace(/\r?\n/g," ").trim();if(/^[=+\-@\t]/.test(v))v="'"+v;return/[",;]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}
+function eventsCsv(list){
+  var H=["kunci_duplikat","judul","kategori","status","kota","tanggal_mulai","tanggal_selesai","venue","penyelenggara","harga","genre","lineup","gunung","link_tiket","instagram_sumber","slug","id"];
+  var out=[H.join(",")];
+  list.slice().sort(function(a,b){return a.event_date<b.event_date?-1:a.event_date>b.event_date?1:0}).forEach(function(e){
+    var city=(e.cities&&e.cities.name)||"";
+    out.push([String(city).toLowerCase()+"|"+e.event_date+"|"+nkey(e.title),e.title,e.category,e.status,city,e.event_date,e.end_date,e.venue,e.organizer,e.price_label,e.genre,e.lineup,e.mountain,e.ticket_url,e.source_ig,e.slug,e.id].map(csvCell).join(","))});
+  return"﻿"+out.join("\r\n")+"\r\n"}
+if($("flCsv"))$("flCsv").onclick=function(){
+  if(!shown.length)return msg("Tidak ada postingan di daftar untuk diunduh.","err");
+  var blob=new Blob([eventsCsv(shown)],{type:"text/csv;charset=utf-8"}),a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);a.download="event-"+(($("flCat").value)||"semua")+"-"+tdy()+".csv";document.body.appendChild(a);a.click();
+  setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},1500);
+  var cut=srows!==null&&stotal!=null&&stotal>shown.length;
+  msg(cut?"CSV diunduh: "+shown.length+" dari "+stotal+" hasil (pencarian dibatasi 200). Persempit filter untuk sisanya.":"CSV diunduh: "+shown.length+" event.",cut?"err":"ok")};
 /* Pencarian & filter dijalankan di database (admin_search_events): typo kecil tetap ketemu; kota, kategori, tanggal, status ikut disaring server. */
 function dbSearch(quiet){
   var q=$("flQ").value.trim(),f={p_q:q||null,p_city:$("flCity").value?+$("flCity").value:null,p_category:$("flCat").value||null,p_from:$("flFrom").value||null,p_to:$("flTo").value||null,p_status:$("flStatus").value||null,p_limit:200};
   fk=$("flCat").value;
   var any=q||f.p_city||f.p_category||f.p_from||f.p_to||f.p_status;
-  if(!any){srows=null;draw();return}
+  if(!any){srows=null;stotal=null;draw();return}
   var my=++searchSeq;
   sb.rpc("admin_search_events",f).then(function(r){
     if(my!==searchSeq)return;
     if(r.error){srows=null;draw();if(!quiet)msg(friendlyErr(r.error),"err");return}
-    srows=(r.data&&r.data.rows)||[];draw();
+    srows=(r.data&&r.data.rows)||[];stotal=r.data&&r.data.total!=null?r.data.total:null;draw();
     if($("flCount")&&!kel)$("flCount").textContent=(r.data&&r.data.total!=null?r.data.total:srows.length)+" hasil";
   });
 }
